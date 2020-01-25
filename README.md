@@ -1,6 +1,15 @@
 # Social Gaming
 
-CMPT 373 Social gaming project.
+Team Francesinha Social Gaming Project
+Members:
+
+- John
+- Max
+- Kirat
+- Camilo
+- Eric
+- Lang
+- Dylan
 
 ## Dependencies
 
@@ -32,9 +41,9 @@ This project requires:
 
         make
 
-## Running the Example Chat Client and Chat Server
+## Running the Example Social Game Client and Social Game Server
 
-First run the chat server on an unused port of the server machine. The server
+First run the Social Game server on an unused port of the server machine. The server
 also takes an HTML file that it will server to standard http requests for
 `index.html`.
 
@@ -42,5 +51,5 @@ also takes an HTML file that it will server to standard http requests for
 
 A browser based interface can be accessed by opening the URL
 `http://localhost:4000/index.html`. The server will respond with the
-specified web page above. By clicking `Connect`, the page gains access to
-chat on the server via web sockets in browsers that support web sockets.
+specified web page above. By clicking `Connect`, the page gains access to the
+Social Game on the server via web sockets in browsers that support web sockets.
