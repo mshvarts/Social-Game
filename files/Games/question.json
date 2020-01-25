@@ -1,0 +1,8 @@
+{
+  "GameName": "Question and Answers",
+  "NumberOfPlayers": 5,
+  "Sequence": [
+    { "Output": "What is the capital of BC", "Expected": "Victoria" },
+    { "Output": "Guess a number", "Expected": "5" }
+  ]
+}
