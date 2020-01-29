@@ -12,18 +12,47 @@
         background: #031e11;
         color: #10fd60;
       }
-
       #messages {
-        width: 80em;
-        height: 40em;
+        width: 50em;
+        height: 5em;
         border: solid 1px #cccccc;
         margin-bottom: 5px;
         overflow-y: hidden;
+      }
+      .menuButton {
+        margin:auto;
+        display:block;
+        width:5em;
+        height:1.5em;
+        font-size:2em;
+        margin-bottom:1em;
+      }
+      #roomsDiv {
+        margin:1em auto;
+        width:40%;
+      }
+      #tableStyle {
+        width:100%;
+        text-align:center;
+      }
+      #content { 
+        height: 20em;
+        position:relative;
+      }
+      #goBack {
+        position:absolute;
+        bottom:1em;
       }
     </style>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
+      const Pages = {
+          MENU: 1,
+          HOST: 2,
+          ROOMS: 3
+      }
+      
       $(document).ready(function() {
         function appendText(text) {
           $('#messages').append(text);
@@ -33,24 +62,21 @@
         var ws = null;
         var uriPieces = window.location.href.split('/');
         var wsLocation = 'ws://' + uriPieces[2];
-        $('#uri:text').val(wsLocation);
 
-        $('#connect').click(function() {
-          ws = new WebSocket(uri.value);
-          ws.onopen = function(ev) {
+        ws = new WebSocket(wsLocation);
+        ws.onopen = function(ev) {
             appendText('Connected!\n');
-          };
-          ws.onclose = function(ev) {
+        };
+        ws.onclose = function(ev) {
             appendText('Disconnected!\n');
-          };
-          ws.onmessage = function(ev) {
+        };
+        ws.onmessage = function(ev) {
             appendText(ev.data + '\n');
-          };
-          ws.onerror = function(ev) {
+        };
+        ws.onerror = function(ev) {
             appendText('[error]\n');
             console.log(ev);
-          };
-        });
+        };
 
         $('#disconnect').click(function() {
           ws.close();
@@ -67,17 +93,72 @@
             $('#send').click();
           }
         });
+        
+        $('#content').on('click', '#hostButton', function(){
+            changePage(Pages.HOST);
+        });
+        
+        $('#content').on('click', '#roomButton', function(){
+            changePage(Pages.ROOMS);
+        });
+        
+        $('#content').on('click', '#goBack', function() {
+            changePage(Pages.MENU);
+        });
+     
+         function changePage(newPage) {
+            let output = "";
+            console.log(newPage)
+            if(newPage == Pages.MENU){
+                output = '<button id="hostButton" class="menuButton">Host</button>\
+                <button id="roomButton" class="menuButton">Room</button>'
+            }
+            else if(newPage == Pages.HOST){
+                output = '<center>:^)</center><button id="goBack">Back</button>'
+            }
+            else if(newPage == Pages.ROOMS){
+                output = `<div id="roomsDiv">
+                            Current Rooms:<br><br>
+                            <table id="tableStyle" border="2">
+                                <tr>
+                                    <th>Room Name</th>
+                                    <th>Number Of Players</th>
+                                    <th>Game status</th>
+                                </tr>
+                                <tr>
+                                    <td>Test room</td>
+                                    <td>2</td>
+                                    <td>Waiting for players</td>
+                                </tr>
+                                <tr>
+                                    <td>Test room 2</td>
+                                    <td>1</td>
+                                    <td>Waiting for players</td>
+                                </tr>
+                            </table>
+                          </div>
+                          <br><br><button id="goBack">Back</button>`
+            }
+            $('#outputSection').html(output)
+        }
+        changePage(Pages.MENU)
+        
       });
     </script>
   </head>
 
   <body>
-    <h1>Web Game Francesinha</h1>
-
-    Game Francesinha Server: <input id="uri" size="40" />
-    <button id="connect">Connect</button>
-    <button id="disconnect">Disconnect</button><br />
-
+    <div id="content">
+        <center><h1>Web Game Fluffernutter</h1></center><br>
+        
+        <div id="outputSection"></div>
+        <button id="goBack">Back</button>
+        <!--Game Francesinha Server: <input id="uri" size="40" />
+        <button id="connect">Connect</button>
+        <button id="disconnect">Disconnect</button><br />-->
+    </div> 
+    <br><hr>
+    
     <pre id="messages"></pre>
 
     <div style="margin-bottom: 5px;">
@@ -85,5 +166,6 @@
       <input id="sendMessage" size="80" value="" />
       <button id="send">Send</button>
     </div>
+    
   </body>
 </html>
