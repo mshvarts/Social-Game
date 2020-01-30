@@ -33,9 +33,9 @@ public:
       ioService{},
       websocket{ioService} {
     boost::asio::ip::tcp::resolver resolver{ioService};
-    boost::asio::string_view boost_address{address.data(), address.size()};
-    boost::asio::string_view boost_port{port.data(), port.size()};
-    connect(resolver.resolve(boost_address, boost_port));
+	boost::asio::string_view boost_address{ address.data(), address.size() };
+	boost::asio::string_view boost_port{ port.data(), port.size() };
+	connect(resolver.resolve(boost_address, boost_port));
   }
 
   void disconnect();

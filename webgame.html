@@ -75,6 +75,7 @@
             appendText('Disconnected!\n');
         };
         ws.onmessage = function(ev) {
+            console.log(ev.data)
             appendText(ev.data + '\n');
         };
         ws.onerror = function(ev) {
@@ -118,6 +119,7 @@
             }
             else if(newPage == Pages.HOST){
                 output = '<center>:^)</center><button id="goBack">Back</button>'
+                ws.send("[createRoom]")
             }
             else if(newPage == Pages.ROOMS){
                 output = `<div id="roomsDiv">
