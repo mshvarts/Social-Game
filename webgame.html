@@ -13,11 +13,15 @@
         color: #10fd60;
       }
       #messages {
-        width: 50em;
+        width: 48em;
+        background-color: #254010;
         height: 5em;
         border: solid 1px #cccccc;
         margin-bottom: 5px;
         overflow-y: hidden;
+      }
+      #sendMessage {
+        background-color: #254010;
       }
       .menuButton {
         margin:auto;
@@ -108,7 +112,6 @@
      
          function changePage(newPage) {
             let output = "";
-            console.log(newPage)
             if(newPage == Pages.MENU){
                 output = '<button id="hostButton" class="menuButton">Host</button>\
                 <button id="roomButton" class="menuButton">Room</button>'
@@ -152,14 +155,13 @@
         <center><h1>Web Game Fluffernutter</h1></center><br>
         
         <div id="outputSection"></div>
-        <button id="goBack">Back</button>
         <!--Game Francesinha Server: <input id="uri" size="40" />
         <button id="connect">Connect</button>
         <button id="disconnect">Disconnect</button><br />-->
     </div> 
     <br><hr>
     
-    <pre id="messages"></pre>
+    <textarea rows="4" cols="40" id="messages"></textarea>
 
     <div style="margin-bottom: 5px;">
       Enter Message:<br />
