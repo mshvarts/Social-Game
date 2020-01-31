@@ -2,17 +2,7 @@
 
 std::string User::getName() const
 {
-    return name;
-}
-
-std::string User::getUserName() const
-{
-    return userName;
-}
-
-std::string User::getCode() const
-{
-    return inviteCode;
+    return displayName;
 }
 
 bool User::isHosting() const
@@ -20,17 +10,28 @@ bool User::isHosting() const
     return isHost;
 }
 
-void User::setCode(std::string code)
+int User::getUserId() const {
+	return userId;
+}
+
+bool User::isSpectating() const
 {
-    inviteCode = code;
+	return isSpectator;
+}
+
+void User::setUserId(int userId) {
+	userId = userId;
+}
+
+void User::setCurrentRoom(int roomId) {
+	currentRoom = roomId;
 }
 
 void User::setPlayerName(std::string pName)
 {
-    name = pName;
+	displayName = pName;
 }
 
-void User::setUserName(std::string uName)
-{
-    userName = uName;
+void User::setSpectator(bool isSpectating) {
+	isSpectator = isSpectating;
 }
