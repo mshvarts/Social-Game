@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "Server.h"
+#include "Game.h"
 
 #include <fstream>
 #include <iostream>
@@ -42,6 +43,7 @@ struct MessageResult
 MessageResult
 processMessages(Server &server, const std::deque<Message> &incoming)
 {
+  const uintptr_t SERVER_CONNECTION_ID = 420;
   std::ostringstream result;
   bool quit = false;
   for (auto &message : incoming)
@@ -57,7 +59,17 @@ processMessages(Server &server, const std::deque<Message> &incoming)
     }
     else
     {
-      result << message.connection.id << "> " << message.text << "\n";
+		if (message.connection.id == SERVER_CONNECTION_ID) {
+			// Process a server command
+			// Create a Game Class std::string gameType, std::string gameCode, int playerCount, bool gameStatus, std::string hostName, std::vector<std::string> playerNames
+			std::vector<std::string> playerNames = {"player1"};
+			Game game{ "unknown", "1337", 0, 0, "new game",  playerNames};
+			result << message.text << "\n";
+		}
+		else {
+			// Regular chat message
+			result << message.connection.id << "> " << message.text << "\n";
+		}
     }
   }
   return MessageResult{result.str(), quit};

@@ -175,7 +175,14 @@ Channel::readMessage() {
     [this, self] (auto errorCode, std::size_t size) {
       if (!errorCode) {
         auto message = boost::beast::buffers_to_string(streamBuf.data());
-        readBuffer.push_back({connection, std::move(message)});
+		if (strcmp(message.c_str(), "[createRoom]") == 0) {
+			// server command
+			readBuffer.push_back({ {serverImpl.server.SERVER_CONNECTION_ID}, "Created a new room" });
+		}
+		else {
+			// regular chat message
+			readBuffer.push_back({connection, std::move(message)});
+		}
         streamBuf.consume(streamBuf.size());
         this->readMessage();
       } else if (!disconnected) {

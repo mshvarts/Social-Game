@@ -101,6 +101,8 @@ public:
       impl{buildImpl(*this, port, std::move(httpMessage))}
       { }
 
+  const uintptr_t SERVER_CONNECTION_ID = 420;
+
   /**
    *  Perform all pending sends and receives. This function can throw an
    *  exception if any of the I/O operations encounters an error.
