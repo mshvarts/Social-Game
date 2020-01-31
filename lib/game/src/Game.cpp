@@ -1,23 +1,28 @@
 #include "Game.h"
 
-std::string Game::getGameType() const
-{
-	return gameType;
-}
-
-std::string Game::getGameCode() const
-{
-	return gameCode;
-}
-
 int Game::getPlayerCount() const
 {
 	return playerCount;
 }
 
-bool Game::getGameStatus() const
+int Game::getMaxNumberOfPlayers() const
 {
-	return gameStatus;
+	return maxPlayerCount;
+}
+
+int Game::getMinNumberOfPlayers() const
+{
+	return minPlayerCount;
+}
+
+bool Game::isGameBeingPlayed() const
+{
+	return isBeingPlayed;
+}
+
+bool Game::isAudienceAllowed() const
+{
+	return hasAudience;
 }
 
 std::string Game::getHostName() const
@@ -30,24 +35,9 @@ std::vector<std::string> Game::getPlayerNames() const
 	return playerNames;
 }
 
-void Game::setGameType(std::string gType)
-{
-	gameType = gType;
-}
-
-void Game::setGameCode(std::string gCode)
-{
-	gameCode = gCode;
-}
-
 void Game::setPlayerCount(int pCount)
 {
 	playerCount = pCount;
-}
-
-void Game::setGameStatus(bool gStatus)
-{
-	gameStatus = gStatus;
 }
 
 void Game::setHostName(std::string hName)
@@ -59,6 +49,3 @@ void Game::setPlayerNames(std::vector<std::string> pNames)
 {
 	playerNames = pNames;
 }
-
-
-
