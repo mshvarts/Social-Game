@@ -1,15 +1,32 @@
 #include "Parser.h"
-#include <iostream>
 
-void Parser::parse(boost::property_tree::ptree &pt)
+void Parser::parseGameConfiguration(std::unique_ptr<Game> &game)
 {
-    boost::property_tree::ptree pt;
-    try
-    {
-        boost::property_tree::read_json(filePath, pt);
-    }
-    catch (std::exception const &e)
-    {
-        std::cerr << e.what << std::endl;
-    }
+    auto configurationJSON = R"(
+        {
+            "configuration": {
+                "name": "Zen Game",
+                "player count": {"min": 0, "max": 0},
+                "audience": false,
+                "setup": { }
+            },
+            "constants": {},
+            "variables": {},
+            "per-player": {},
+            "per-audience": {},
+            "rules": {}
+        }
+    )"_json;
+
+    game->setGameName(configurationJSON["configuration"]["name"]);
+}
+
+bool Parser::validateGame()
+{
+    return true;
+}
+
+std::string Parser::Hello()
+{
+    return "Hello";
 }
