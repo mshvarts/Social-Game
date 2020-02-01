@@ -14,7 +14,7 @@ private:
 public:
     Parser(std::string filePath) : filePath(filePath) {}
     void parseGameConfiguration(std::unique_ptr<Game> &game);
-    bool validateGame();
+    bool validateGameJSON();
 };
 
 #endif

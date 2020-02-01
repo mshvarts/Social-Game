@@ -2,31 +2,49 @@
 
 void Parser::parseGameConfiguration(std::unique_ptr<Game> &game)
 {
-    auto configurationJSON = R"(
+    //TODO: Remove sample json once we know where to get the json from users.
+    auto JsonFile = R"(
         {
             "configuration": {
-                "name": "Zen Game",
-                "player count": {"min": 0, "max": 0},
+                "name": "Rock, Paper, Scissors",
+                "player count": {"min": 2, "max": 4},
                 "audience": false,
-                "setup": { }
+                "setup": {
+                "Rounds": 10
+                }
             },
-            "constants": {},
-            "variables": {},
-            "per-player": {},
-            "per-audience": {},
-            "rules": {}
+
+            "constants": {
+                "weapons": [
+                { "name": "Rock",     "beats": "Scissors"},
+                { "name": "Paper",    "beats": "Rock"},
+                { "name": "Scissors", "beats": "Paper"}
+                ]
+            },
+
+            "variables": {
+                "winners": []
+            },
+
+            "per-player": {
+                "wins": 0
+            },
+
+            "per-audience": {}
         }
     )"_json;
 
-    game->setGameName(configurationJSON["configuration"]["name"]);
+    auto configurationJson = JsonFile["configuration"];
+
+    game->setGameName(configurationJson["name"]);
+    game->setMaxNumberOfPlayers(configurationJson["player count"]["max"]);
+    game->setMinNumberOfPlayers(configurationJson["player count"]["min"]);
+    game->setIsGameBeingPlayed(configurationJson["audience"]);
+
+    //TODO: add more complex json items to the Game class.
 }
 
-bool Parser::validateGame()
+bool Parser::validateGameJSON()
 {
     return true;
-}
-
-std::string Parser::Hello()
-{
-    return "Hello";
 }
