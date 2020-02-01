@@ -1,3 +1,6 @@
+#ifndef GAME_H
+#define GAME_H
+
 #include <string>
 #include <vector>
 #include <map>
@@ -28,45 +31,39 @@ private:
 
 public:
 	//constructor
-	Game(
-		std::string name,
-		std::string hostName,
-		std::vector<std::string> playerNames,
-		int playerCount,
-		int maxPlayerCount,
-		int minPlayerCount,
-		bool isBeingPlayed,
-		bool hasAudience,
-		map_strings setup,
-		std::map<std::string, std::vector<map_strings>> constants,
-		std::vector<map_strings> perPlayer,
-		std::vector<map_strings> perAudience) : name{name},
-												hostName{hostName},
-												playerNames{playerNames},
-												playerCount{playerCount},
-												maxPlayerCount{maxPlayerCount},
-												minPlayerCount{minPlayerCount},
-												isBeingPlayed{isBeingPlayed},
-												hasAudience{hasAudience},
-												setup{setup},
-												constants{constants},
-												perPlayer{perPlayer},
-												perAudience{perAudience} {}
+	//TODO: add arguments that we can fill once we initialize a new game. (Host, numPlayers, RoomId....)
+	Game() {} 
 
 	// getters
+	std::string getGameName() const;
+	std::string getHostName() const;
+	std::vector<std::string> getPlayerNames() const;
 	int getPlayerCount() const;
 	int getMaxNumberOfPlayers() const;
 	int getMinNumberOfPlayers() const;
-
 	bool isGameBeingPlayed() const;
 	bool isAudienceAllowed() const;
-
-	std::string getHostName() const;
-	std::vector<std::string> getPlayerNames() const;
+	map_strings getGameSetup() const;
+	std::map<std::string, std::vector<map_strings>> getGameConstants() const;
+	std::map<std::string, std::vector<map_strings>> getGameVairables() const;
+	std::vector<map_strings> getPerPlayer();
+	std::vector<map_strings> getPerAudience();
 
 	//setters
-	void setPlayerCount(int pCount);
-	void setGameStatus(bool gStatus);
+	void setGameName(std::string gName);
 	void setHostName(std::string hName);
 	void setPlayerNames(std::vector<std::string> pNames);
+	void setPlayerCount(int pCount);
+	void setMaxNumberOfPlayers(int gMaxCount);
+	void setMinNumberOfPlayers(int gMinCount);
+	void setIsGameBeingPlayed(bool gIsPlaying);
+	void setAudienceAllowed(bool gAudience);
+
+	void setSetup(map_strings gSetup);
+	void setConstants(std::map<std::string, std::vector<map_strings>> gConstants);
+	void setVariables(std::map<std::string, std::vector<map_strings>> gVariables);
+	void setPerPlayer(std::vector<map_strings> gPerPlayer);
+	void setPerAudience(std::vector<map_strings> gPerPlayer);
 };
+
+#endif
