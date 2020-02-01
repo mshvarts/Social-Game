@@ -40,18 +40,18 @@ public:
 		map_strings setup,
 		std::map<std::string, std::vector<map_strings>> constants,
 		std::vector<map_strings> perPlayer,
-		std::vector<map_strings> perAudience) : name(name),
-												hostName(hostName),
-												playerNames(playerNames),
-												playerCount(playerCount),
-												maxPlayerCount(maxPlayerCount),
-												minPlayerCount(minPlayerCount),
-												isBeingPlayed(isBeingPlayed),
-												hasAudience(hasAudience),
-												setup(setup),
-												constants(constants),
-												perPlayer(perPlayer),
-												perAudience(perAudience) {}
+		std::vector<map_strings> perAudience) : name{name},
+												hostName{hostName},
+												playerNames{playerNames},
+												playerCount{playerCount},
+												maxPlayerCount{maxPlayerCount},
+												minPlayerCount{minPlayerCount},
+												isBeingPlayed{isBeingPlayed},
+												hasAudience{hasAudience},
+												setup{setup},
+												constants{constants},
+												perPlayer{perPlayer},
+												perAudience{perAudience} {}
 
 	// getters
 	int getPlayerCount() const;
