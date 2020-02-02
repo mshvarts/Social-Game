@@ -34,7 +34,7 @@ public:
 	void setNumOfPlayers(int numOfPlayers);
 	void setPassword(std::string roomPassword);
 	void setMaxSize(int maxNumOfPlayers);
-	bool addUser(User userId);
-	bool removeUser(User userId);
+	bool addUser(User user);
+	bool removeUser(User user);
 	void setRoomGame(Game game);
 };

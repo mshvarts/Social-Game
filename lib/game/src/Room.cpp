@@ -28,7 +28,7 @@ void Room::setMaxSize(int maxNumOfPlayers) {
 bool Room::addUser(User user) {
 	// TODO: add password parameter and dont add user with a wrong password
 	if (numOfPlayers < maxSize) {
-		numOfPlayers = numOfPlayers + 1;
+		numOfPlayers += 1;
 		userList.push_back(user);
 		user.setCurrentRoom(roomId);
 		return true;
@@ -38,9 +38,10 @@ bool Room::addUser(User user) {
 
 /* removes user from userList, decreases numOfPlayers by one, changes currentRoom of the user with the ID int to that of the home room */
 bool Room::removeUser(User user) {
-	// TODO: implement removing user from userList
-	//userList.erase(std::remove(userList.begin(), userList.end(), user), userList.end());
-	numOfPlayers = numOfPlayers - 1;
+	auto p = std::find(userList.begin(), userList.end(), user);
+	userList.erase(p);
+
+	numOfPlayers -= 1;
 	user.setCurrentRoom(HOME_ROOM_ID);
 	return true;
 }

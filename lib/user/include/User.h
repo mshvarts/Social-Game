@@ -26,7 +26,7 @@ public:
 
     // Setters
     void setPlayerName(std::string pName);
-	void setUserId(int userId);
+	void setUserId(int id);
 	void setSpectator(bool isSpectating);
 	void setCurrentRoom(int roomId);
 };

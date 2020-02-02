@@ -19,8 +19,8 @@ bool User::isSpectating() const
 	return isSpectator;
 }
 
-void User::setUserId(int userId) {
-	userId = userId;
+void User::setUserId(int id) {
+	userId = id;
 }
 
 void User::setCurrentRoom(int roomId) {
