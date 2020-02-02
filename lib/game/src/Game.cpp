@@ -1,23 +1,9 @@
 #include "Game.h"
 
-std::string Game::getGameType() const
+// getters
+std::string Game::getGameName() const
 {
-	return gameType;
-}
-
-std::string Game::getGameCode() const
-{
-	return gameCode;
-}
-
-int Game::getPlayerCount() const
-{
-	return playerCount;
-}
-
-bool Game::getGameStatus() const
-{
-	return gameStatus;
+	return name;
 }
 
 std::string Game::getHostName() const
@@ -30,24 +16,36 @@ std::vector<std::string> Game::getPlayerNames() const
 	return playerNames;
 }
 
-void Game::setGameType(std::string gType)
+int Game::getPlayerCount() const
 {
-	gameType = gType;
+	return playerCount;
 }
 
-void Game::setGameCode(std::string gCode)
+int Game::getMaxNumberOfPlayers() const
 {
-	gameCode = gCode;
+	return maxPlayerCount;
 }
 
-void Game::setPlayerCount(int pCount)
+int Game::getMinNumberOfPlayers() const
 {
-	playerCount = pCount;
+	return minPlayerCount;
 }
 
-void Game::setGameStatus(bool gStatus)
+bool Game::isGameBeingPlayed() const
 {
-	gameStatus = gStatus;
+	return isBeingPlayed;
+}
+
+bool Game::isAudienceAllowed() const
+{
+	return hasAudience;
+}
+
+// setters
+
+void Game::setGameName(std::string gName)
+{
+	name = gName;
 }
 
 void Game::setHostName(std::string hName)
@@ -55,10 +53,31 @@ void Game::setHostName(std::string hName)
 	hostName = hName;
 }
 
+void Game::setPlayerCount(int pCount)
+{
+	playerCount = pCount;
+}
+
 void Game::setPlayerNames(std::vector<std::string> pNames)
 {
 	playerNames = pNames;
 }
 
+void Game::setMaxNumberOfPlayers(int gMaxCount)
+{
+	maxPlayerCount = gMaxCount;
+}
 
+void Game::setMinNumberOfPlayers(int gMinCount)
+{
+	minPlayerCount = gMinCount;
+}
+void Game::setIsGameBeingPlayed(bool gIsPlaying)
+{
+	isBeingPlayed = gIsPlaying;
+}
 
+void Game::setAudienceAllowed(bool gAudience)
+{
+	hasAudience = gAudience;
+}

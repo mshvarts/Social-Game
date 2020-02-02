@@ -59,17 +59,18 @@ processMessages(Server &server, const std::deque<Message> &incoming)
     }
     else
     {
-		if (message.connection.id == SERVER_CONNECTION_ID) {
-			// Process a server command
-			// Create a Game Class std::string gameType, std::string gameCode, int playerCount, bool gameStatus, std::string hostName, std::vector<std::string> playerNames
-			std::vector<std::string> playerNames = {"player1"};
-			Game game{ "unknown", "1337", 0, 0, "new game",  playerNames};
-			result << message.text << "\n";
-		}
-		else {
-			// Regular chat message
-			result << message.connection.id << "> " << message.text << "\n";
-		}
+      if (message.connection.id == SERVER_CONNECTION_ID)
+      {
+        // Process a server command
+
+        //TODO: Should create a new Room somewhere after this code is hit and after that ask the owner to enter the game settings json.
+        result << message.text << "\n";
+      }
+      else
+      {
+        // Regular chat message
+        result << message.connection.id << "> " << message.text << "\n";
+      }
     }
   }
   return MessageResult{result.str(), quit};
