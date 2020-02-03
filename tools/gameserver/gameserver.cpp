@@ -7,6 +7,7 @@
 
 #include "Server.h"
 #include "Game.h"
+#include "User.h"
 
 #include <fstream>
 #include <iostream>
@@ -14,17 +15,23 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
+#include <unordered_map>
 
 using networking::Connection;
+using networking::ConnectionHash;
 using networking::ConnectionMessage;
 using networking::Server;
 
 std::vector<Connection> clients;
 
+std::unordered_map<Connection, User, ConnectionHash> users;
+
 void onConnect(Connection c)
 {
   std::cout << "New connection found: " << c.id << "\n";
   clients.push_back(c);
+  User tempUser{"testTempUser"};
+  users.insert(std::pair<Connection, User>{c, tempUser});
 }
 
 void onDisconnect(Connection c)
@@ -32,6 +39,7 @@ void onDisconnect(Connection c)
   std::cout << "Connection lost: " << c.id << "\n";
   auto eraseBegin = std::remove(std::begin(clients), std::end(clients), c);
   clients.erase(eraseBegin, std::end(clients));
+  users.erase(c);
 }
 
 struct MessageResult

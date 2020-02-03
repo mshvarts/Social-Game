@@ -1,4 +1,6 @@
 
+find_package(Boost 1.66 COMPONENTS system REQUIRED)
+
 add_executable(gameserver
   gameserver.cpp
 )
@@ -12,10 +14,17 @@ set_target_properties(gameserver
 
 find_package(Threads REQUIRED)
 
+target_include_directories(gameserver
+	PRIVATE
+	${Boost_INCLUDE_DIR}
+)
+
 target_link_libraries(gameserver
   networking
   game
+  user
   ${CMAKE_THREAD_LIBS_INIT}
+  ${Boost_LIBRARIES}
 )
 
 install(TARGETS gameserver

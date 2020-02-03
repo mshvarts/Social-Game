@@ -1,18 +1,21 @@
 #include <string>
-#include <time.h>
+#include <utility>
+#include <time>
 
 class User
 {
 private:
     std::string displayName;
 	int currentRoom;
-    bool isHost;
-	bool isSpectator;
+    bool isHost = false;
+	bool isSpectator = false;
 	int userId; /* a unique ID to be used by the backend to designate specific users. Generated randomly on initialization */
 	const int MAX_USER_ID = 65535;
 
 public:
     // Constructor
+    User(std::string  name) : displayName(std::move(name)) {};
+
     User(std::string name, bool isHost, bool isSpectating) : displayName(name), isHost(isHost), isSpectator(isSpectating) {
 		std::srand(time(0));
 		userId = rand() % MAX_USER_ID;
