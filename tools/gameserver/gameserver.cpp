@@ -16,7 +16,7 @@
 #include <vector>
 
 using networking::Connection;
-using networking::Message;
+using networking::ConnectionMessage;
 using networking::Server;
 
 std::vector<Connection> clients;
@@ -41,7 +41,7 @@ struct MessageResult
 };
 
 MessageResult
-processMessages(Server &server, const std::deque<Message> &incoming)
+processMessages(Server &server, const std::deque<ConnectionMessage> &incoming)
 {
   const uintptr_t SERVER_CONNECTION_ID = 420;
   std::ostringstream result;
@@ -76,10 +76,10 @@ processMessages(Server &server, const std::deque<Message> &incoming)
   return MessageResult{result.str(), quit};
 }
 
-std::deque<Message>
+std::deque<ConnectionMessage>
 buildOutgoing(const std::string &log)
 {
-  std::deque<Message> outgoing;
+  std::deque<ConnectionMessage> outgoing;
   for (auto client : clients)
   {
     outgoing.push_back({client, log});
