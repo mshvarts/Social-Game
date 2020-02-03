@@ -1,4 +1,6 @@
 add_subdirectory(networking)
 add_subdirectory(user)
-add_subdirectory(parser)
+add_subdirectory(json_processing)
 add_subdirectory(game)
+add_subdirectory(parser)
+add_subdirectory(messaging)

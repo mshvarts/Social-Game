@@ -45,7 +45,7 @@ struct ConnectionHash {
  *  A Message containing text that can be sent to or was recieved from a given
  *  Connection.
  */
-struct Message {
+struct ConnectionMessage {
   Connection connection;
   std::string text;
 };
@@ -110,14 +110,14 @@ public:
   /**
    *  Send a list of messages to their respective Clients.
    */
-  void send(const std::deque<Message>& messages);
+  void send(const std::deque<ConnectionMessage>& messages);
 
   /**
    *  Receive Message instances from Client instances. This returns all Message
    *  instances collected by previous calls to Server::update() and not yet
    *  received.
    */
-  [[nodiscard]] std::deque<Message> receive();
+  [[nodiscard]] std::deque<ConnectionMessage> receive();
 
   /**
    *  Disconnect the Client specified by the given Connection.

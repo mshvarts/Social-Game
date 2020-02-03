@@ -12,7 +12,7 @@
 #include <boost/beast.hpp>
 
 using namespace std::string_literals;
-using networking::Message;
+using networking::ConnectionMessage;
 using networking::Server;
 using networking::ServerImpl;
 using networking::ServerImplDeleter;
@@ -56,7 +56,7 @@ public:
   boost::beast::http::string_body::value_type httpMessage;
 
   ChannelMap channels;
-  std::deque<Message> incoming;
+  std::deque<ConnectionMessage> incoming;
 };
 
 
@@ -93,7 +93,7 @@ private:
   boost::beast::flat_buffer streamBuf;
   boost::beast::websocket::stream<boost::asio::ip::tcp::socket> websocket;
 
-  std::deque<Message> &readBuffer;
+  std::deque<ConnectionMessage> &readBuffer;
   std::deque<std::string> writeBuffer;
 };
 
@@ -374,16 +374,16 @@ Server::update() {
 }
 
 
-std::deque<Message>
+std::deque<ConnectionMessage>
 Server::receive() {
-  std::deque<Message> oldIncoming;
+  std::deque<ConnectionMessage> oldIncoming;
   std::swap(oldIncoming, impl->incoming);
   return oldIncoming;
 }
 
 
 void
-Server::send(const std::deque<Message>& messages) {
+Server::send(const std::deque<ConnectionMessage>& messages) {
   for (auto& message : messages) {
     auto found = impl->channels.find(message.connection);
     if (impl->channels.end() != found) {
