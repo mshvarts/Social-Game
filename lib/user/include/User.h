@@ -1,3 +1,6 @@
+#ifndef SOCIALGAMING_USER_H
+#define SOCIALGAMING_USER_H
+
 #include <string>
 #include <utility>
 #include <ctime>
@@ -33,3 +36,5 @@ public:
 	void setSpectator(bool isSpectating);
 	void setCurrentRoom(int roomId);
 };
+
+#endif //SOCIALGAMING_USER_H
