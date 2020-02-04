@@ -31,13 +31,18 @@ std::unique_ptr<ServerEngine> serverEngine;
 void onConnect(Connection c)
 {
   std::cout << "New connection found: " << c.id << "\n";
+
+  serverEngine->logIn(c);
+
   clients.push_back(c);
-  User tempUser{"testTempUser"};
 }
 
 void onDisconnect(Connection c)
 {
   std::cout << "Connection lost: " << c.id << "\n";
+
+  serverEngine->logOut(c);
+
   auto eraseBegin = std::remove(std::begin(clients), std::end(clients), c);
   clients.erase(eraseBegin, std::end(clients));
 }
@@ -112,7 +117,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  serverEngine = std::make_unique<ServerEngine>(clients);
+  serverEngine = std::make_unique<ServerEngine>();
 
   unsigned short port = std::stoi(argv[1]);
   Server server{port, getHTTPMessage(argv[2]), onConnect, onDisconnect};

@@ -14,19 +14,24 @@ namespace server_engine {
 
 using networking::Connection;
 using networking::ConnectionMessage;
+using networking::ConnectionHash;
+
+typedef std::unordered_map<Connection, User, ConnectionHash> UserMap;
 
 class ServerEngine {
 public:
-	explicit ServerEngine(const std::vector<Connection> &);
+	explicit ServerEngine() = default;
 
 	void createRoom(User host);
+	void logIn(Connection connection);
+	void logOut(Connection connection);
 
 	void processMessage(ConnectionMessage message);
 
 	std::vector<ConnectionMessage> getMessages();
 
 private:
-	const std::vector<Connection> &connections;
+	UserMap users;
 
 	std::vector<ConnectionMessage> outgoing;
 };
