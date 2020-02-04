@@ -1,3 +1,6 @@
+#ifndef SOCIALGAMING_ROOM_H
+#define SOCIALGAMING_ROOM_H
+
 #include "User.h"
 #include "Game.h"
 
@@ -36,3 +39,5 @@ public:
 	bool addUser(User userId);
 	bool removeUser(User userId);
 };
+
+#endif //SOCIALGAMING_ROOM_H
