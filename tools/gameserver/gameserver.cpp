@@ -6,8 +6,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "Server.h"
-#include "Game.h"
-#include "User.h"
 #include "ServerEngine.h"
 
 #include <fstream>
@@ -16,7 +14,6 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
-#include <unordered_map>
 
 using networking::Connection;
 using networking::ConnectionHash;
