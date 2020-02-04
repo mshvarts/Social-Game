@@ -5,12 +5,15 @@
 #ifndef SOCIALGAMING_SERVERENGINE_H
 #define SOCIALGAMING_SERVERENGINE_H
 
-#include "Server.h"
+#include <vector>
+
+#include "Connections.h"
 #include "User.h"
 
 namespace server_engine {
 
 using networking::Connection;
+using networking::ConnectionMessage;
 
 class ServerEngine {
 public:
@@ -18,8 +21,14 @@ public:
 
 	void createRoom(User host);
 
+	void processMessage(ConnectionMessage message);
+
+	std::vector<ConnectionMessage> getMessages();
+
 private:
 	const std::vector<Connection> &connections;
+
+	std::vector<ConnectionMessage> outgoing;
 };
 
 }

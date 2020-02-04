@@ -8,6 +8,7 @@
 #include "Server.h"
 #include "Game.h"
 #include "User.h"
+#include "ServerEngine.h"
 
 #include <fstream>
 #include <iostream>
@@ -22,7 +23,10 @@ using networking::ConnectionHash;
 using networking::ConnectionMessage;
 using networking::Server;
 
+using server_engine::ServerEngine;
+
 std::vector<Connection> clients;
+std::unique_ptr<ServerEngine> serverEngine;
 
 void onConnect(Connection c)
 {
@@ -62,7 +66,10 @@ processMessages(Server &server, const std::deque<ConnectionMessage> &incoming)
     }
     else
     {
-        result << message.connection.id << "> " << message.text << "\n";
+    	serverEngine->processMessage(message);
+    	auto response = serverEngine->getMessages()[0];
+
+        result << response.connection.id << "> " << response.text << "\n";
     }
   }
   return MessageResult{result.str(), quit};
@@ -104,6 +111,8 @@ int main(int argc, char *argv[])
               << "  e.g. " << argv[0] << " 4002 ./webgame.html\n";
     return 1;
   }
+
+  serverEngine = std::make_unique<ServerEngine>(clients);
 
   unsigned short port = std::stoi(argv[1]);
   Server server{port, getHTTPMessage(argv[2]), onConnect, onDisconnect};

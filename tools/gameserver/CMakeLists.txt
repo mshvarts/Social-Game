@@ -23,6 +23,7 @@ target_link_libraries(gameserver
   networking
   game
   user
+  server_engine
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
 )
