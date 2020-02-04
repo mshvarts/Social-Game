@@ -8,6 +8,8 @@
 #include "Server.h"
 #include "User.h"
 
+namespace server_engine {
+
 using networking::Connection;
 
 class ServerEngine {
@@ -17,7 +19,9 @@ public:
 	void createRoom(User host);
 
 private:
-	const std::vector<Connection>& connections;
+	const std::vector<Connection> &connections;
 };
+
+}
 
 #endif //SOCIALGAMING_SERVERENGINE_H
