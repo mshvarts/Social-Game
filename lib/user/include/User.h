@@ -9,7 +9,7 @@ class User
 {
 private:
     std::string displayName;
-	int currentRoom;
+	int currentRoom = -1;
     bool isHost = false;
 	bool isSpectator = false;
 	int userId; /* a unique ID to be used by the backend to designate specific users. Generated randomly on initialization */

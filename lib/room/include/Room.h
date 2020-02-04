@@ -4,11 +4,9 @@
 #include "User.h"
 #include "Game.h"
 
-typedef int RoomId_t;
-
 class Room {
 private:
-	RoomId_t roomId;
+	int roomId;
 	std::string roomName;
 	//const User& hostUser;
 	int numOfPlayers;
