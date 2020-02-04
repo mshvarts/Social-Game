@@ -1,4 +1,5 @@
 #include "User.h"
+#include "Connections.h"
 
 std::string User::getName() const
 {
@@ -34,4 +35,12 @@ void User::setPlayerName(std::string pName)
 
 void User::setSpectator(bool isSpectating) {
 	isSpectator = isSpectating;
+}
+
+int User::getCurrentRoom() const {
+	return currentRoom;
+}
+
+networking::Connection User::getConnection() const {
+	return connection;
 }

@@ -16,6 +16,7 @@ target_link_libraries(server_engine
 	json_processing
 	user
 	networking
+	room
 	)
 
 set_target_properties(server_engine

@@ -29,6 +29,7 @@ public:
 
 	int getNumOfPlayers() const;
 	std::string getRoomName() const;
+	std::vector<User> getUserList() const;
 
 	bool setRoomName(std::string roomName);
 	void setNumOfPlayers(int numOfPlayers);

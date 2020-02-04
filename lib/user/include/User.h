@@ -4,10 +4,12 @@
 #include <string>
 #include <utility>
 #include <ctime>
+#include "Connections.h"
 
 class User
 {
 private:
+	networking::Connection connection;
     std::string displayName;
 	int currentRoom = -1;
     bool isHost = false;
@@ -17,7 +19,10 @@ private:
 
 public:
     // Constructor
-    User(std::string  name) : displayName(std::move(name)) {};
+    User(networking::Connection connection, std::string name) :
+        connection{connection},
+        displayName(std::move(name))
+        {};
 
     User(std::string name, bool isHost, bool isSpectating) : displayName(name), isHost(isHost), isSpectator(isSpectating) {
 		std::srand(time(0));
@@ -28,7 +33,9 @@ public:
     std::string getName() const;
     bool isHosting() const;
 	bool isSpectating() const;
+	networking::Connection getConnection() const;
 	int getUserId() const;
+	int getCurrentRoom() const;
 
     // Setters
     void setPlayerName(std::string pName);

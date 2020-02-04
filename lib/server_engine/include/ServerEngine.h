@@ -9,6 +9,7 @@
 
 #include "Connections.h"
 #include "User.h"
+#include "Room.h"
 
 namespace server_engine {
 
@@ -17,10 +18,11 @@ using networking::ConnectionMessage;
 using networking::ConnectionHash;
 
 typedef std::unordered_map<Connection, User, ConnectionHash> UserMap;
+typedef std::unordered_map<int, Room> RoomMap;
 
 class ServerEngine {
 public:
-	explicit ServerEngine() = default;
+	explicit ServerEngine();
 
 	void createRoom(User host);
 	void logIn(Connection connection);
@@ -32,6 +34,7 @@ public:
 
 private:
 	UserMap users;
+	RoomMap rooms;
 
 	std::vector<ConnectionMessage> outgoing;
 };
