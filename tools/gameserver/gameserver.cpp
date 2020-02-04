@@ -46,14 +46,14 @@ void onDisconnect(Connection c)
 
 struct MessageResult
 {
-  std::string result;
+  std::vector<ConnectionMessage> result;
   bool shouldShutdown;
 };
 
 MessageResult
 processMessages(Server &server, const std::deque<ConnectionMessage> &incoming)
 {
-  std::ostringstream result;
+  std::vector<ConnectionMessage> result;
   bool quit = false;
   for (auto &message : incoming)
   {
@@ -69,22 +69,21 @@ processMessages(Server &server, const std::deque<ConnectionMessage> &incoming)
     else
     {
     	serverEngine->processMessage(message);
-    	auto response = serverEngine->getMessages()[0];
+    	auto response = serverEngine->getMessages();
 
-        result << response.connection.id << "> " << response.text << "\n";
+        result.insert(result.end(), response.begin(), response.end());
     }
   }
-  return MessageResult{result.str(), quit};
+  return MessageResult{result, quit};
 }
 
 std::deque<ConnectionMessage>
-buildOutgoing(const std::string &log)
+buildOutgoing(const std::vector<ConnectionMessage> &log)
 {
   std::deque<ConnectionMessage> outgoing;
-  for (auto client : clients)
-  {
-    outgoing.push_back({client, log});
-  }
+
+  outgoing.insert(outgoing.end(), log.begin(), log.end());
+
   return outgoing;
 }
 
