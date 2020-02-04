@@ -163,17 +163,5 @@ private:
 
 }
 
-
-//namespace std {
-//template <> struct hash<networking::Connection>
-//{
-//	size_t operator()(const networking::Connection & c) const
-//	{
-//		return std::hash<decltype(c.id)>{}(c.id);
-//	}
-//};
-//}
-
-
 #endif
 
