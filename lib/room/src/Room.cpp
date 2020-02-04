@@ -45,14 +45,6 @@ bool Room::removeUser(User user) {
 	return true;
 }
 
-Game Room::getRoomGame() const {
-	return roomGame;
-}
-
-void Room::setRoomGame(Game game) {
-	roomGame = game;
-}
-
 std::string Room::getRoomName() const {
 	return roomName;
 }

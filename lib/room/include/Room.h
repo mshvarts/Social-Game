@@ -6,7 +6,6 @@ class Room {
 private:
 	int roomId;
 	std::string roomName;
-	Game roomGame;
 	int hostId;
 	int numOfPlayers;
 	int maxSize;
@@ -18,7 +17,7 @@ private:
 	const int HOME_ROOM_ID = -1;
 
 public:
-	Room(std::string roomName, User hostUser, Game game) : roomName(roomName), roomGame(game), hostId(hostUser.getUserId()) {
+	Room(std::string roomName, User hostUser) : roomName(roomName), hostId(hostUser.getUserId()) {
 		std::srand(time(0));
 		roomId = rand() % MAX_ROOM_ID;
 		locked = false;
@@ -26,7 +25,6 @@ public:
 		numOfPlayers = 0;
 	}
 
-	Game getRoomGame() const;
 	int getNumOfPlayers() const;
 	std::string getRoomName() const;
 
@@ -36,5 +34,4 @@ public:
 	void setMaxSize(int maxNumOfPlayers);
 	bool addUser(User userId);
 	bool removeUser(User userId);
-	void setRoomGame(Game game);
 };
