@@ -13,6 +13,7 @@ private:
 	std::string password;
 	bool locked;
 	std::vector<User> userList;
+	std::vector<User> spectatorList;
 	const int DEFAULT_MAX_ROOM_SIZE = 6;
 	const int MAX_ROOM_ID = 65535;
 	const int HOME_ROOM_ID = -1;
@@ -34,7 +35,8 @@ public:
 	void setNumOfPlayers(int numOfPlayers);
 	void setPassword(std::string roomPassword);
 	void setMaxSize(int maxNumOfPlayers);
-	bool addUser(User user);
+	bool addUser(User user, std::string passEntered);
 	bool removeUser(User user);
 	void setRoomGame(Game game);
+	void removePassword();
 };
