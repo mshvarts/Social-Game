@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "Server.h"
-#include "Game.h"
+#include "ServerEngine.h"
 
 #include <fstream>
 #include <iostream>
@@ -16,35 +16,44 @@
 #include <vector>
 
 using networking::Connection;
-using networking::Message;
+using networking::ConnectionHash;
+using networking::ConnectionMessage;
 using networking::Server;
 
+using server_engine::ServerEngine;
+
 std::vector<Connection> clients;
+std::unique_ptr<ServerEngine> serverEngine;
 
 void onConnect(Connection c)
 {
   std::cout << "New connection found: " << c.id << "\n";
+
+  serverEngine->logIn(c);
+
   clients.push_back(c);
 }
 
 void onDisconnect(Connection c)
 {
   std::cout << "Connection lost: " << c.id << "\n";
+
+  serverEngine->logOut(c);
+
   auto eraseBegin = std::remove(std::begin(clients), std::end(clients), c);
   clients.erase(eraseBegin, std::end(clients));
 }
 
 struct MessageResult
 {
-  std::string result;
+  std::vector<ConnectionMessage> result;
   bool shouldShutdown;
 };
 
 MessageResult
-processMessages(Server &server, const std::deque<Message> &incoming)
+processMessages(Server &server, const std::deque<ConnectionMessage> &incoming)
 {
-  const uintptr_t SERVER_CONNECTION_ID = 420;
-  std::ostringstream result;
+  std::vector<ConnectionMessage> result;
   bool quit = false;
   for (auto &message : incoming)
   {
@@ -59,31 +68,22 @@ processMessages(Server &server, const std::deque<Message> &incoming)
     }
     else
     {
-      if (message.connection.id == SERVER_CONNECTION_ID)
-      {
-        // Process a server command
+    	serverEngine->processMessage(message);
+    	auto response = serverEngine->getMessages();
 
-        //TODO: Should create a new Room somewhere after this code is hit and after that ask the owner to enter the game settings json.
-        result << message.text << "\n";
-      }
-      else
-      {
-        // Regular chat message
-        result << message.connection.id << "> " << message.text << "\n";
-      }
+        result.insert(result.end(), response.begin(), response.end());
     }
   }
-  return MessageResult{result.str(), quit};
+  return MessageResult{result, quit};
 }
 
-std::deque<Message>
-buildOutgoing(const std::string &log)
+std::deque<ConnectionMessage>
+buildOutgoing(const std::vector<ConnectionMessage> &log)
 {
-  std::deque<Message> outgoing;
-  for (auto client : clients)
-  {
-    outgoing.push_back({client, log});
-  }
+  std::deque<ConnectionMessage> outgoing;
+
+  outgoing.insert(outgoing.end(), log.begin(), log.end());
+
   return outgoing;
 }
 
@@ -112,6 +112,8 @@ int main(int argc, char *argv[])
               << "  e.g. " << argv[0] << " 4002 ./webgame.html\n";
     return 1;
   }
+
+  serverEngine = std::make_unique<ServerEngine>();
 
   unsigned short port = std::stoi(argv[1]);
   Server server{port, getHTTPMessage(argv[2]), onConnect, onDisconnect};
