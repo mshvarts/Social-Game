@@ -1,25 +1,27 @@
 #ifndef SOCIALGAMING_ROOM_H
 #define SOCIALGAMING_ROOM_H
-
 #include "User.h"
 #include "Game.h"
 
 class Room {
+
 private:
 	int roomId;
 	std::string roomName;
-	//const User& hostUser;
+	//Game roomGame;
+	int hostId;
 	int numOfPlayers;
 	int maxSize;
 	std::string password;
 	bool locked;
 	std::vector<User> userList;
+	std::vector<User> spectatorList;
 	const int DEFAULT_MAX_ROOM_SIZE = 6;
 	const int MAX_ROOM_ID = 65535;
 	const int HOME_ROOM_ID = -1;
 
 public:
-	Room(std::string roomName) : roomName(roomName) {
+	Room(std::string roomName, User hostUser) : roomName(roomName), hostId(hostUser.getUserId()) {
 		std::srand(time(0));
 		roomId = rand() % MAX_ROOM_ID;
 		locked = false;
@@ -35,8 +37,10 @@ public:
 	void setNumOfPlayers(int numOfPlayers);
 	void setPassword(std::string roomPassword);
 	void setMaxSize(int maxNumOfPlayers);
-	bool addUser(User userId);
-	bool removeUser(User userId);
+	bool addUser(User user, std::string passEntered);
+	bool addUser(User user);
+	bool removeUser(User user);
+	void removePassword();
 };
 
 #endif //SOCIALGAMING_ROOM_H

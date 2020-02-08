@@ -15,7 +15,7 @@ private:
     bool isHost = false;
 	bool isSpectator = false;
 	int userId; /* a unique ID to be used by the backend to designate specific users. Generated randomly on initialization */
-	const int MAX_USER_ID = 65535;
+	static const int MAX_USER_ID = 65535;
 
 public:
     // Constructor
@@ -25,7 +25,6 @@ public:
         {};
 
     User(std::string name, bool isHost, bool isSpectating) : displayName(name), isHost(isHost), isSpectator(isSpectating) {
-		std::srand(time(0));
 		userId = rand() % MAX_USER_ID;
 	}
 
@@ -39,9 +38,10 @@ public:
 
     // Setters
     void setPlayerName(std::string pName);
-	void setUserId(int userId);
-	void setSpectator(bool isSpectating);
+	void setSpectating(bool isSpectating);
+	void setHosting(bool isHosting);
 	void setCurrentRoom(int roomId);
+	bool operator==(const User& other);
 };
 
 #endif //SOCIALGAMING_USER_H

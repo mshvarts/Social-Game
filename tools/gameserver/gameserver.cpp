@@ -14,6 +14,7 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
+#include <time.h>
 
 using networking::Connection;
 using networking::ConnectionHash;
@@ -106,6 +107,7 @@ getHTTPMessage(const char *htmlLocation)
 
 int main(int argc, char *argv[])
 {
+  std::srand(time(0));
   if (argc < 3)
   {
     std::cerr << "Usage:\n  " << argv[0] << " <port> <html response>\n"

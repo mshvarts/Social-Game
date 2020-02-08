@@ -20,12 +20,12 @@ bool User::isSpectating() const
 	return isSpectator;
 }
 
-void User::setUserId(int userId) {
-	userId = userId;
-}
-
 void User::setCurrentRoom(int roomId) {
 	currentRoom = roomId;
+}
+
+void User::setHosting(bool isHosting) {
+	isHost = isHosting;
 }
 
 void User::setPlayerName(std::string pName)
@@ -33,7 +33,7 @@ void User::setPlayerName(std::string pName)
 	displayName = pName;
 }
 
-void User::setSpectator(bool isSpectating) {
+void User::setSpectating(bool isSpectating) {
 	isSpectator = isSpectating;
 }
 
@@ -43,4 +43,8 @@ int User::getCurrentRoom() const {
 
 networking::Connection User::getConnection() const {
 	return connection;
+}
+
+bool User::operator==(const User& other)  {
+	return userId == other.getUserId();
 }

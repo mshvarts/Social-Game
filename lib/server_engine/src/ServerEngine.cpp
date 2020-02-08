@@ -4,7 +4,8 @@
 namespace server_engine {
 
 ServerEngine::ServerEngine() {
-	Room mainMenu{"MainMenu"};
+	User dummy{"dummy", false, false};
+	Room mainMenu{"MainMenu", dummy};
 	rooms.insert(RoomMap::value_type{-1, mainMenu});
 }
 
