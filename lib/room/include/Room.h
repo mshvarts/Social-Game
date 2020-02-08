@@ -8,7 +8,7 @@ class Room {
 private:
 	int roomId;
 	std::string roomName;
-	Game roomGame;
+	//Game roomGame;
 	int hostId;
 	int numOfPlayers;
 	int maxSize;
@@ -21,7 +21,7 @@ private:
 	const int HOME_ROOM_ID = -1;
 
 public:
-	Room(std::string roomName, User hostUser, Game game) : roomName(roomName), roomGame(game), hostId(hostUser.getUserId()) {
+	Room(std::string roomName, User hostUser) : roomName(roomName), hostId(hostUser.getUserId()) {
 		std::srand(time(0));
 		roomId = rand() % MAX_ROOM_ID;
 		locked = false;
@@ -29,7 +29,6 @@ public:
 		numOfPlayers = 0;
 	}
 
-	Game getRoomGame() const;
 	int getNumOfPlayers() const;
 	std::string getRoomName() const;
 	std::vector<User> getUserList() const;
@@ -39,8 +38,8 @@ public:
 	void setPassword(std::string roomPassword);
 	void setMaxSize(int maxNumOfPlayers);
 	bool addUser(User user, std::string passEntered);
+	bool addUser(User user);
 	bool removeUser(User user);
-	void setRoomGame(Game game);
 	void removePassword();
 };
 

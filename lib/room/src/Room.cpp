@@ -52,6 +52,10 @@ bool Room::addUser(User user, std::string passEntered) {
 	return false;
 }
 
+bool Room::addUser(User user) {
+	return addUser(std::move(user), "");
+}
+
 /* removes user from userList, decreases numOfPlayers by one, changes currentRoom of the user with the ID int to that of the home room */
 bool Room::removeUser(User user) {
 	
@@ -76,14 +80,6 @@ bool Room::removeUser(User user) {
 	numOfPlayers -= 1;
 	user.setCurrentRoom(HOME_ROOM_ID);
 	return true;
-}
-
-Game Room::getRoomGame() const {
-	return roomGame;
-}
-
-void Room::setRoomGame(Game game) {
-	roomGame = game;
 }
 
 std::string Room::getRoomName() const {
