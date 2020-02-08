@@ -1,3 +1,5 @@
+#ifndef SOCIALGAMING_ROOM_H
+#define SOCIALGAMING_ROOM_H
 #include "User.h"
 #include "Game.h"
 
@@ -30,6 +32,7 @@ public:
 	Game getRoomGame() const;
 	int getNumOfPlayers() const;
 	std::string getRoomName() const;
+	std::vector<User> getUserList() const;
 
 	bool setRoomName(std::string roomName);
 	void setNumOfPlayers(int numOfPlayers);
@@ -40,3 +43,5 @@ public:
 	void setRoomGame(Game game);
 	void removePassword();
 };
+
+#endif //SOCIALGAMING_ROOM_H

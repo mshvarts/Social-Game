@@ -93,3 +93,7 @@ std::string Room::getRoomName() const {
 int Room::getNumOfPlayers() const {
 	return numOfPlayers;
 }
+
+std::vector<User> Room::getUserList() const {
+	return userList;
+}
