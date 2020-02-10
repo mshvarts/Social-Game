@@ -1,5 +1,7 @@
 #include "Room.h"
 
+#include <algorithm>
+
 bool Room::setRoomName(std::string roomName) {
 	// TODO: check for duplicate, or invalid room names
 	this->roomName = roomName;

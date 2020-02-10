@@ -1,8 +1,5 @@
 #include "User.h"
 
-#include <utility>
-#include "Connections.h"
-
 std::string User::getName() const
 {
     return displayName;

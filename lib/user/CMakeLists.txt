@@ -13,7 +13,6 @@ target_include_directories(user
 
 target_link_libraries(user
 	PUBLIC
-	networking
 	)
 
 set_target_properties(user

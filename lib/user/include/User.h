@@ -2,9 +2,6 @@
 #define SOCIALGAMING_USER_H
 
 #include <string>
-#include <utility>
-#include <ctime>
-#include "Connections.h"
 
 using UserId = int;
 
