@@ -11,29 +11,22 @@ using UserId = int;
 class User
 {
 private:
-	networking::Connection connection;
-    std::string displayName;
 	UserId userId; /* a unique ID to be used by the backend to designate specific users. Generated randomly on initialization */
-	static const int MAX_USER_ID = 65535;
+	std::string displayName;
 
 public:
     // Constructor
-    User(networking::Connection connection, std::string name) :
-        connection{connection},
+    User(UserId userId, std::string name) :
+        userId(userId),
         displayName(std::move(name))
         {};
 
-    User(std::string name) : displayName(name) {
-		userId = rand() % MAX_USER_ID;
-	}
-
     // Getters
     std::string getName() const;
-	networking::Connection getConnection() const;
 	int getUserId() const;
 
     // Setters
-    void setPlayerName(std::string pName);
+    void setName(std::string pName);
 	bool operator==(const User& other);
 };
 
