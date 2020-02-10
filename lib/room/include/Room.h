@@ -2,23 +2,24 @@
 #define SOCIALGAMING_ROOM_H
 
 #include "User.h"
-#include "Game.h"
 
 class Room {
 
 private:
+	const size_t DEFAULT_MAX_ROOM_SIZE = 6;
+
 	std::string roomName;
 	size_t maxSize;
 	bool locked;
 	std::string password;
 	std::vector<UserId> userList;
-	const int DEFAULT_MAX_ROOM_SIZE = 6;
 
 public:
-	explicit Room(std::string roomName) : roomName(std::move(roomName)) {
-		locked = false;
-		maxSize = DEFAULT_MAX_ROOM_SIZE;
-	}
+	explicit Room(std::string roomName) :
+		roomName(std::move(roomName)),
+		maxSize(DEFAULT_MAX_ROOM_SIZE),
+		locked(false)
+	{}
 
 	[[nodiscard]] int getNumOfPlayers() const;
 	[[nodiscard]] std::string getRoomName() const;
