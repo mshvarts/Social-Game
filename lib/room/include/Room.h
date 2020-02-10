@@ -8,14 +8,14 @@ class Room {
 
 private:
 	std::string roomName;
-	int maxSize;
+	size_t maxSize;
 	bool locked;
 	std::string password;
 	std::vector<UserId> userList;
 	const int DEFAULT_MAX_ROOM_SIZE = 6;
 
 public:
-	Room(std::string roomName) : roomName(roomName) {
+	explicit Room(std::string roomName) : roomName(std::move(roomName)) {
 		locked = false;
 		maxSize = DEFAULT_MAX_ROOM_SIZE;
 	}
@@ -24,10 +24,10 @@ public:
 	[[nodiscard]] std::string getRoomName() const;
 	[[nodiscard]] std::vector<UserId> getUserList() const;
 
-	bool setRoomName(std::string roomName);
+	bool setRoomName(std::string name);
 	void setPassword(std::string roomPassword);
 	void setMaxSize(int maxNumOfPlayers);
-	bool addUser(UserId user, std::string passEntered);
+	bool addUser(UserId user, const std::string& passEntered);
 	bool addUser(UserId user);
 	void removeUser(UserId user);
 	void removePassword();

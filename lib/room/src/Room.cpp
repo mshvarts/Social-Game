@@ -2,9 +2,9 @@
 
 #include <algorithm>
 
-bool Room::setRoomName(std::string roomName) {
+bool Room::setRoomName(std::string name) {
 	// TODO: check for duplicate, or invalid room names
-	this->roomName = roomName;
+	this->roomName = std::move(name);
 	return true;
 }
 
@@ -15,7 +15,7 @@ void Room::removePassword() {
 
 void Room::setPassword(std::string roomPassword) {
 	locked = true;
-	password = roomPassword;
+	password = std::move(roomPassword);
 }
 
 void Room::setMaxSize(int maxNumOfPlayers) {
@@ -24,9 +24,9 @@ void Room::setMaxSize(int maxNumOfPlayers) {
 
 /* Adds user to userList if there is room and the password is correct */
 /* Returns false if password was incorrect */
-bool Room::addUser(UserId user, std::string passEntered) {
+bool Room::addUser(UserId user, const std::string& passEntered) {
 
-	if (!locked || (locked && !passEntered.compare(password))) { // Correct Password
+	if (!locked || (locked && passEntered == password)) { // Correct Password
 		if (userList.size() < maxSize) {
 			userList.push_back(user);
 		}
@@ -37,7 +37,7 @@ bool Room::addUser(UserId user, std::string passEntered) {
 
 /* Adds user to userList if there is room */
 bool Room::addUser(UserId user) {
-	return addUser(std::move(user), "");
+	return addUser(user, "");
 }
 
 /* removes user from userList, decreases numOfPlayers by one, changes currentRoom of the user with the ID int to that of the home room */
