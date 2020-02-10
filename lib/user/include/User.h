@@ -22,8 +22,8 @@ public:
         {};
 
     // Getters
-    std::string getName() const;
-	int getUserId() const;
+    [[nodiscard]] std::string getName() const;
+	[[nodiscard]] int getUserId() const;
 
     // Setters
     void setName(std::string pName);

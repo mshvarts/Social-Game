@@ -1,4 +1,6 @@
 #include "User.h"
+
+#include <utility>
 #include "Connections.h"
 
 std::string User::getName() const
@@ -10,9 +12,9 @@ int User::getUserId() const {
 	return userId;
 }
 
-void User::setName(std::string pName)
+void User::setName(std::string name)
 {
-	displayName = pName;
+	displayName = std::move(name);
 }
 
 bool User::operator==(const User& other)  {
