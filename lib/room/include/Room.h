@@ -3,6 +3,8 @@
 
 #include "User.h"
 
+#include <vector>
+
 class Room {
 
 private:
