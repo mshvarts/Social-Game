@@ -2,6 +2,7 @@
 #define SOCIALGAMING_USER_H
 
 #include <string>
+#include <utility>
 
 using UserId = int;
 
