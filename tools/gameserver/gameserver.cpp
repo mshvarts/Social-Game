@@ -6,7 +6,9 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "Server.h"
+#include "User.h"
 #include "ServerEngine.h"
+#include "ConnectionMapper.h"
 
 #include <fstream>
 #include <iostream>
@@ -19,18 +21,18 @@
 using networking::Connection;
 using networking::ConnectionHash;
 using networking::ConnectionMessage;
+using networking::ConnectionMapper;
 using networking::Server;
 
 using server_engine::ServerEngine;
 
 std::vector<Connection> clients;
+std::unique_ptr<ConnectionMapper> connectionMapper;
 std::unique_ptr<ServerEngine> serverEngine;
 
 void onConnect(Connection c)
 {
   std::cout << "New connection found: " << c.id << "\n";
-
-  serverEngine->logIn(c);
 
   clients.push_back(c);
 }
@@ -38,8 +40,6 @@ void onConnect(Connection c)
 void onDisconnect(Connection c)
 {
   std::cout << "Connection lost: " << c.id << "\n";
-
-  serverEngine->logOut(c);
 
   auto eraseBegin = std::remove(std::begin(clients), std::end(clients), c);
   clients.erase(eraseBegin, std::end(clients));
@@ -69,10 +69,19 @@ processMessages(Server &server, const std::deque<ConnectionMessage> &incoming)
     }
     else
     {
-    	serverEngine->processMessage(message);
-    	auto response = serverEngine->getMessages();
+    	auto messageUserId = connectionMapper->getUserIdForConnection(message.connection);
+    	EngineMessage engineMessage{messageUserId, message.text};
 
-        result.insert(result.end(), response.begin(), response.end());
+    	serverEngine->processMessage(engineMessage);
+
+    	auto engineResponse = serverEngine->getMessages();
+
+    	for(auto &responseMessage : engineResponse) {
+    		auto messageConnection = connectionMapper->getConnectionForUserId(responseMessage.userId);
+    		ConnectionMessage outgoing{messageConnection, responseMessage.text};
+
+    		result.push_back(outgoing);
+    	}
     }
   }
   return MessageResult{result, quit};
@@ -115,6 +124,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
+  connectionMapper = std::make_unique<ConnectionMapper>();
   serverEngine = std::make_unique<ServerEngine>();
 
   unsigned short port = std::stoi(argv[1]);

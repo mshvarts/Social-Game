@@ -11,6 +11,11 @@
 #include "User.h"
 #include "Room.h"
 
+struct EngineMessage {
+	UserId userId;
+	std::string text;
+};
+
 namespace server_engine {
 
 using networking::Connection;
@@ -28,15 +33,15 @@ public:
 	void logIn(Connection connection);
 	void logOut(Connection connection);
 
-	void processMessage(ConnectionMessage message);
+	void processMessage(EngineMessage message);
 
-	std::vector<ConnectionMessage> getMessages();
+	std::vector<EngineMessage> getMessages();
 
 private:
 	UserMap users;
 	RoomMap rooms;
 
-	std::vector<ConnectionMessage> outgoing;
+	std::vector<EngineMessage> outgoing;
 };
 
 }

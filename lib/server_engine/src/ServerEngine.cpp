@@ -12,11 +12,11 @@ void ServerEngine::createRoom(User host) {
 
 }
 
-void ServerEngine::processMessage(ConnectionMessage message) {
+void ServerEngine::processMessage(EngineMessage message) {
 }
 
-std::vector<ConnectionMessage> ServerEngine::getMessages() {
-	std::vector<ConnectionMessage> oldOutgoing;
+std::vector<EngineMessage> ServerEngine::getMessages() {
+	std::vector<EngineMessage> oldOutgoing;
 	std::swap(oldOutgoing, outgoing);
 	return oldOutgoing;
 }

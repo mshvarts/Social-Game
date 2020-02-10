@@ -4,7 +4,7 @@
 #include <string>
 #include <utility>
 
-using UserId = int;
+using UserId = unsigned long;
 
 class User
 {
