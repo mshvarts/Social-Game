@@ -3,44 +3,28 @@
 
 #include <string>
 #include <utility>
-#include <ctime>
-#include "Connections.h"
+
+using UserId = unsigned long;
 
 class User
 {
 private:
-	networking::Connection connection;
-    std::string displayName;
-	int currentRoom = -1;
-    bool isHost = false;
-	bool isSpectator = false;
-	int userId; /* a unique ID to be used by the backend to designate specific users. Generated randomly on initialization */
-	static const int MAX_USER_ID = 65535;
+	UserId userId; /* a unique ID to be used by the backend to designate specific users. Generated randomly on initialization */
+	std::string displayName;
 
 public:
     // Constructor
-    User(networking::Connection connection, std::string name) :
-        connection{connection},
+    User(UserId userId, std::string name) :
+        userId(userId),
         displayName(std::move(name))
         {};
 
-    User(std::string name, bool isHost, bool isSpectating) : displayName(name), isHost(isHost), isSpectator(isSpectating) {
-		userId = rand() % MAX_USER_ID;
-	}
-
     // Getters
-    std::string getName() const;
-    bool isHosting() const;
-	bool isSpectating() const;
-	networking::Connection getConnection() const;
-	int getUserId() const;
-	int getCurrentRoom() const;
+    [[nodiscard]] std::string getName() const;
+	[[nodiscard]] int getUserId() const;
 
     // Setters
-    void setPlayerName(std::string pName);
-	void setSpectating(bool isSpectating);
-	void setHosting(bool isHosting);
-	void setCurrentRoom(int roomId);
+    void setName(std::string pName);
 	bool operator==(const User& other);
 };
 

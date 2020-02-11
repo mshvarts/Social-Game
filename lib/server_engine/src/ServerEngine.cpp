@@ -1,42 +1,34 @@
 
 #include "ServerEngine.h"
+#include "MessageParser.h"
 
-namespace server_engine {
+#include <algorithm>
 
-ServerEngine::ServerEngine() {
-	User dummy{"dummy", false, false};
-	Room mainMenu{"MainMenu", dummy};
-	rooms.insert(RoomMap::value_type{-1, mainMenu});
+ServerEngine::ServerEngine() = default;
+
+void ServerEngine::processMessage(const EngineMessage& message) {
+	MessageParser::parseMessage(message, this);
 }
 
-void ServerEngine::createRoom(User host) {
-
-}
-
-void ServerEngine::processMessage(ConnectionMessage message) {
-	Room senderRoom = rooms.at(users.at(message.connection).getCurrentRoom());
-
-	for(const auto& user : senderRoom.getUserList()) {
-		ConnectionMessage chatMessage{user.getConnection(), message.text};
-		outgoing.push_back(chatMessage);
-	}
-}
-
-std::vector<ConnectionMessage> ServerEngine::getMessages() {
-	std::vector<ConnectionMessage> oldOutgoing;
+std::vector<EngineMessage> ServerEngine::getMessages() {
+	std::vector<EngineMessage> oldOutgoing;
 	std::swap(oldOutgoing, outgoing);
 	return oldOutgoing;
 }
 
-void ServerEngine::logIn(Connection connection) {
-	User newUser{connection, "testUser"};
-	rooms.at(-1).addUser(newUser);
-	users.insert(UserMap::value_type(connection, newUser));
+/* A system for loading users from a database can later be implemented here or in another module
+ */
+void ServerEngine::logIn(UserId userId) {
+	User newUser{userId, std::to_string(userId)};
+	users.emplace(userId, std::move(newUser));
 }
 
-void ServerEngine::logOut(Connection connection) {
-	rooms.at(-1).removeUser(users.at(connection));
-	users.erase(connection);
+void ServerEngine::logOut(UserId userId) {
+	users.erase(userId);
 }
 
+void ServerEngine::chatMessage(UserId userId, const std::string& text) {
+	for(auto const &userEntry : users) {
+		outgoing.push_back(EngineMessage{userEntry.first, std::to_string(userId) + " > " + text});
+	}
 }

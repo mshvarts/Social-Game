@@ -14,7 +14,6 @@ target_include_directories(room
 target_link_libraries(room
 	PUBLIC
 	user
-	game
 	)
 
 set_target_properties(room

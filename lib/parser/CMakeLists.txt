@@ -1,6 +1,6 @@
 
 add_library(parser
-  src/Parser.cpp
+	src/GameParser.cpp
 )
 
 find_package(nlohmann_json 3.2.0 REQUIRED)

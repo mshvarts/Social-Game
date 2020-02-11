@@ -1,45 +1,38 @@
 #ifndef SOCIALGAMING_ROOM_H
 #define SOCIALGAMING_ROOM_H
+
 #include "User.h"
-#include "Game.h"
+
+#include <vector>
 
 class Room {
 
 private:
-	int roomId;
+	const size_t DEFAULT_MAX_ROOM_SIZE = 6;
+
 	std::string roomName;
-	//Game roomGame;
-	int hostId;
-	int numOfPlayers;
-	int maxSize;
-	std::string password;
+	size_t maxSize;
 	bool locked;
-	std::vector<User> userList;
-	std::vector<User> spectatorList;
-	const int DEFAULT_MAX_ROOM_SIZE = 6;
-	const int MAX_ROOM_ID = 65535;
-	const int HOME_ROOM_ID = -1;
+	std::string password;
+	std::vector<UserId> userList;
 
 public:
-	Room(std::string roomName, User hostUser) : roomName(roomName), hostId(hostUser.getUserId()) {
-		std::srand(time(0));
-		roomId = rand() % MAX_ROOM_ID;
-		locked = false;
-		maxSize = DEFAULT_MAX_ROOM_SIZE;
-		numOfPlayers = 0;
-	}
+	explicit Room(std::string roomName) :
+		roomName(std::move(roomName)),
+		maxSize(DEFAULT_MAX_ROOM_SIZE),
+		locked(false)
+	{}
 
-	int getNumOfPlayers() const;
-	std::string getRoomName() const;
-	std::vector<User> getUserList() const;
+	[[nodiscard]] int getNumOfPlayers() const;
+	[[nodiscard]] std::string getRoomName() const;
+	[[nodiscard]] std::vector<UserId> getUserList() const;
 
-	bool setRoomName(std::string roomName);
-	void setNumOfPlayers(int numOfPlayers);
+	bool setRoomName(std::string name);
 	void setPassword(std::string roomPassword);
 	void setMaxSize(int maxNumOfPlayers);
-	bool addUser(User user, std::string passEntered);
-	bool addUser(User user);
-	bool removeUser(User user);
+	bool addUser(UserId user, const std::string& passEntered);
+	bool addUser(UserId user);
+	void removeUser(UserId user);
 	void removePassword();
 };
 

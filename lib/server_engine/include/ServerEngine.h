@@ -6,39 +6,42 @@
 #define SOCIALGAMING_SERVERENGINE_H
 
 #include <vector>
+#include <unordered_map>
+#include <memory>
 
-#include "Connections.h"
 #include "User.h"
 #include "Room.h"
 
-namespace server_engine {
+struct EngineMessage {
+	UserId userId;
+	std::string text;
+};
 
-using networking::Connection;
-using networking::ConnectionMessage;
-using networking::ConnectionHash;
-
-typedef std::unordered_map<Connection, User, ConnectionHash> UserMap;
-typedef std::unordered_map<int, Room> RoomMap;
+using UserMap = std::unordered_map<UserId, User>;
 
 class ServerEngine {
 public:
 	explicit ServerEngine();
 
-	void createRoom(User host);
-	void logIn(Connection connection);
-	void logOut(Connection connection);
+	void logIn(UserId userId);
+	void logOut(UserId userId);
 
-	void processMessage(ConnectionMessage message);
+	void processMessage(const EngineMessage& message);
+	std::vector<EngineMessage> getMessages();
 
-	std::vector<ConnectionMessage> getMessages();
+	/* These messages are to be called by the JSON processor
+	 * for the purpose of good design, figure out how to somehow
+	 * refactor this to better encapsulate this functionality.
+	 * MessageParser can't be a friend class in the header because
+	 * it creates a circular dependency. Maybe something like how the
+	 * server class is separated from it's implementation in the
+	 * network code? */
+	void chatMessage(UserId userId, const std::string& text);
 
 private:
 	UserMap users;
-	RoomMap rooms;
 
-	std::vector<ConnectionMessage> outgoing;
+	std::vector<EngineMessage> outgoing;
 };
-
-}
 
 #endif //SOCIALGAMING_SERVERENGINE_H

@@ -1,6 +1,6 @@
-#include "Parser.h"
+#include "GameParser.h"
 
-void Parser::parseGameConfiguration(std::unique_ptr<Game> &game)
+void GameParser::parseGameConfiguration(std::unique_ptr<Game> &game)
 {
     //TODO: Remove sample json once we know where to get the json from users.
     auto JsonFile = R"(
@@ -44,7 +44,7 @@ void Parser::parseGameConfiguration(std::unique_ptr<Game> &game)
     //TODO: add more complex json items to the Game class.
 }
 
-bool Parser::validateGameJSON()
+bool GameParser::validateGameJSON()
 {
     return true;
 }

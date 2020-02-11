@@ -1,8 +1,7 @@
 
 add_library(json_processing
 	src/Builder.cpp
-	src/Parser.cpp
-	)
+	src/MessageParser.cpp)
 
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
@@ -16,6 +15,8 @@ target_include_directories(json_processing
 
 target_link_libraries(json_processing
 	PUBLIC
+	user
+	server_engine
 	nlohmann_json::nlohmann_json)
 
 set_target_properties(json_processing
