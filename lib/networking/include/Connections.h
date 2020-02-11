@@ -6,6 +6,7 @@
 #define SOCIALGAMING_CONNECTIONS_H
 
 #include <functional>
+#include <string>
 
 namespace networking {
 
