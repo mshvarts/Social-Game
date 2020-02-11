@@ -24,8 +24,6 @@ using networking::ConnectionMessage;
 using networking::ConnectionMapper;
 using networking::Server;
 
-using server_engine::ServerEngine;
-
 std::vector<Connection> clients;
 std::unique_ptr<ConnectionMapper> connectionMapper;
 std::unique_ptr<ServerEngine> serverEngine;

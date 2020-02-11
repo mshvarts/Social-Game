@@ -1,17 +1,13 @@
 
 #include "ServerEngine.h"
+#include "MessageParser.h"
 
 #include <algorithm>
-
-namespace server_engine {
 
 ServerEngine::ServerEngine() = default;
 
 void ServerEngine::processMessage(const EngineMessage& message) {
-	for(auto &userEntry : users) {
-		EngineMessage outgoingMessage{userEntry.first, message.text};
-		outgoing.push_back(std::move(outgoingMessage));
-	}
+	MessageParser::parseMessage(message, this);
 }
 
 std::vector<EngineMessage> ServerEngine::getMessages() {
@@ -31,4 +27,8 @@ void ServerEngine::logOut(UserId userId) {
 	users.erase(userId);
 }
 
+void ServerEngine::chatMessage(UserId userId, const std::string& text) {
+	for(auto const &userEntry : users) {
+		outgoing.push_back(EngineMessage{userEntry.first, std::to_string(userId) + " > " + text});
+	}
 }
