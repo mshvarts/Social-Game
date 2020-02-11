@@ -1,32 +1,31 @@
+#ifndef SOCIALGAMING_USER_H
+#define SOCIALGAMING_USER_H
+
 #include <string>
-#include <time.h>
+#include <utility>
+
+using UserId = unsigned long;
 
 class User
 {
 private:
-    std::string displayName;
-	int currentRoom;
-    bool isHost;
-	bool isSpectator;
-	int userId; /* a unique ID to be used by the backend to designate specific users. Generated randomly on initialization */
-	const int MAX_USER_ID = 65535;
+	UserId userId; /* a unique ID to be used by the backend to designate specific users. Generated randomly on initialization */
+	std::string displayName;
 
 public:
     // Constructor
-    User(std::string name, bool isHost, bool isSpectating) : displayName(name), isHost(isHost), isSpectator(isSpectating) {
-		std::srand(time(0));
-		userId = rand() % MAX_USER_ID;
-	}
+    User(UserId userId, std::string name) :
+        userId(userId),
+        displayName(std::move(name))
+        {};
 
     // Getters
-    std::string getName() const;
-    bool isHosting() const;
-	bool isSpectating() const;
-	int getUserId() const;
+    [[nodiscard]] std::string getName() const;
+	[[nodiscard]] int getUserId() const;
 
     // Setters
-    void setPlayerName(std::string pName);
-	void setUserId(int userId);
-	void setSpectator(bool isSpectating);
-	void setCurrentRoom(int roomId);
+    void setName(std::string pName);
+	bool operator==(const User& other);
 };
+
+#endif //SOCIALGAMING_USER_H
