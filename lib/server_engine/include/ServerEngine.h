@@ -6,8 +6,8 @@
 #define SOCIALGAMING_SERVERENGINE_H
 
 #include <vector>
+#include <unordered_map>
 
-#include "Connections.h"
 #include "User.h"
 #include "Room.h"
 
@@ -18,28 +18,22 @@ struct EngineMessage {
 
 namespace server_engine {
 
-using networking::Connection;
-using networking::ConnectionMessage;
-using networking::ConnectionHash;
-
-typedef std::unordered_map<Connection, User, ConnectionHash> UserMap;
-typedef std::unordered_map<int, Room> RoomMap;
+using UserMap = std::unordered_map<UserId, User>;
 
 class ServerEngine {
 public:
 	explicit ServerEngine();
 
-	void createRoom(User host);
-	void logIn(Connection connection);
-	void logOut(Connection connection);
+	//void createRoom(User host);
+	void logIn(UserId userId);
+	void logOut(UserId userId);
 
-	void processMessage(EngineMessage message);
+	void processMessage(const EngineMessage& message);
 
 	std::vector<EngineMessage> getMessages();
 
 private:
 	UserMap users;
-	RoomMap rooms;
 
 	std::vector<EngineMessage> outgoing;
 };

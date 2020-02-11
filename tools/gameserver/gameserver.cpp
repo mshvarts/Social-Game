@@ -16,7 +16,7 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
-#include <time.h>
+#include <ctime>
 
 using networking::Connection;
 using networking::ConnectionHash;
@@ -34,12 +34,18 @@ void onConnect(Connection c)
 {
   std::cout << "New connection found: " << c.id << "\n";
 
+  UserId userId = connectionMapper->getUserIdForConnection(c);
+  serverEngine->logIn(userId);
+
   clients.push_back(c);
 }
 
 void onDisconnect(Connection c)
 {
   std::cout << "Connection lost: " << c.id << "\n";
+
+  UserId userId = connectionMapper->getUserIdForConnection(c);
+  serverEngine->logOut(userId);
 
   auto eraseBegin = std::remove(std::begin(clients), std::end(clients), c);
   clients.erase(eraseBegin, std::end(clients));
@@ -116,7 +122,6 @@ getHTTPMessage(const char *htmlLocation)
 
 int main(int argc, char *argv[])
 {
-  std::srand(time(0));
   if (argc < 3)
   {
     std::cerr << "Usage:\n  " << argv[0] << " <port> <html response>\n"
