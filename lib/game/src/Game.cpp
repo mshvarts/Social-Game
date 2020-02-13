@@ -1,83 +1,88 @@
 #include "Game.h"
 
+namespace game
+{
+
 // getters
-std::string game::Game::getGameName() const
+std::string Game::getGameName() const
 {
 	return name;
 }
 
-std::string game::Game::getHostName() const
+std::string Game::getHostName() const
 {
 	return hostName;
 }
 
-std::vector<std::string> game::Game::getPlayerNames() const
+std::vector<std::string> Game::getPlayerNames() const
 {
 	return playerNames;
 }
 
-int game::Game::getPlayerCount() const
+int Game::getPlayerCount() const
 {
 	return playerCount;
 }
 
-int game::Game::getMaxNumberOfPlayers() const
+int Game::getMaxNumberOfPlayers() const
 {
 	return maxPlayerCount;
 }
 
-int game::Game::getMinNumberOfPlayers() const
+int Game::getMinNumberOfPlayers() const
 {
 	return minPlayerCount;
 }
 
-bool game::Game::isGameBeingPlayed() const
+bool Game::isGameBeingPlayed() const
 {
 	return isBeingPlayed;
 }
 
-bool game::Game::isAudienceAllowed() const
+bool Game::isAudienceAllowed() const
 {
 	return hasAudience;
 }
 
 // setters
 
-void game::Game::setGameName(std::string gName)
+void Game::setGameName(std::string gName)
 {
 	name = gName;
 }
 
-void game::Game::setHostName(std::string hName)
+void Game::setHostName(std::string hName)
 {
 	hostName = hName;
 }
 
-void game::Game::setPlayerCount(int pCount)
+void Game::setPlayerCount(int pCount)
 {
 	playerCount = pCount;
 }
 
-void game::Game::setPlayerNames(std::vector<std::string> pNames)
+void Game::setPlayerNames(std::vector<std::string> pNames)
 {
 	playerNames = pNames;
 }
 
-void game::Game::setMaxNumberOfPlayers(int gMaxCount)
+void Game::setMaxNumberOfPlayers(int gMaxCount)
 {
 	maxPlayerCount = gMaxCount;
 }
 
-void game::Game::setMinNumberOfPlayers(int gMinCount)
+void Game::setMinNumberOfPlayers(int gMinCount)
 {
 	minPlayerCount = gMinCount;
 }
-void game::Game::setIsGameBeingPlayed(bool gIsPlaying)
+void Game::setIsGameBeingPlayed(bool gIsPlaying)
 {
 	isBeingPlayed = gIsPlaying;
 }
 
-void game::Game::setAudienceAllowed(bool gAudience)
+void Game::setAudienceAllowed(bool gAudience)
 {
 	hasAudience = gAudience;
 }
+
+} // namespace game

@@ -4,6 +4,7 @@
 #include <string>
 #include <utility>
 #include "Game.h"
+#include <fstream> 
 #include <nlohmann/json.hpp>
 
 #define JSON_CONFIGURATION "configuration"
@@ -12,6 +13,7 @@
 #define JSON_MAX "max"
 #define JSON_MIN "min"
 #define JSON_AUDIENCE "audience"
+#define JSON_SETUP "setup"
 
 using nlohmann::json;
 
@@ -25,7 +27,8 @@ private:
 
 public:
     explicit GameParser(std::string filePath) : filePath(std::move(filePath)) {}
-    void parseGameConfiguration(std::unique_ptr<game::Game> &game, const std::string &configString = "");
+    void parseGame(std::unique_ptr<game::Game> &game);
+    void parseGameConfiguration(std::unique_ptr<game::Game> &game, const json &jsonFile);
     bool validateGameJSON();
 };
 

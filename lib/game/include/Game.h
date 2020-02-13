@@ -6,10 +6,10 @@
 #include <map>
 #include <list>
 
-using map_strings = std::map<std::string, std::string>;
-
 namespace game
 {
+
+using map_strings = std::map<std::string, std::string>;
 
 class Game
 {
