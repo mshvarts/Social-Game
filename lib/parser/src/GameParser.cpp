@@ -1,50 +1,18 @@
 #include "GameParser.h"
 
-void GameParser::parseGameConfiguration(std::unique_ptr<Game> &game)
+
+void parser::GameParser::parseGameConfiguration(std::unique_ptr<game::Game> &game, const std::string &configString)
 {
-    //TODO: Remove sample json once we know where to get the json from users.
-    auto JsonFile = R"(
-        {
-            "configuration": {
-                "name": "Rock, Paper, Scissors",
-                "player count": {"min": 2, "max": 4},
-                "audience": false,
-                "setup": {
-                "Rounds": 10
-                }
-            },
+    json JsonFile = json::parse(configString);
+    auto configurationJson = JsonFile[JSON_CONFIGURATION];
 
-            "constants": {
-                "weapons": [
-                { "name": "Rock",     "beats": "Scissors"},
-                { "name": "Paper",    "beats": "Rock"},
-                { "name": "Scissors", "beats": "Paper"}
-                ]
-            },
-
-            "variables": {
-                "winners": []
-            },
-
-            "per-player": {
-                "wins": 0
-            },
-
-            "per-audience": {}
-        }
-    )"_json;
-
-    auto configurationJson = JsonFile["configuration"];
-
-    game->setGameName(configurationJson["name"]);
-    game->setMaxNumberOfPlayers(configurationJson["player count"]["max"]);
-    game->setMinNumberOfPlayers(configurationJson["player count"]["min"]);
-    game->setIsGameBeingPlayed(configurationJson["audience"]);
-
-    //TODO: add more complex json items to the Game class.
+    game->setGameName(configurationJson[JSON_CONFIG_NAME]);
+    game->setMaxNumberOfPlayers(configurationJson[JSON_CONFIG_PLAYERCOUNT][JSON_MAX]);
+    game->setMinNumberOfPlayers(configurationJson[JSON_CONFIG_PLAYERCOUNT][JSON_MIN]);
+    game->setIsGameBeingPlayed(configurationJson[JSON_AUDIENCE]);
 }
 
-bool GameParser::validateGameJSON()
+bool parser::GameParser::validateGameJSON()
 {
     return true;
 }

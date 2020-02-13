@@ -6,7 +6,10 @@
 #include <map>
 #include <list>
 
-typedef std::map<std::string, std::string> map_strings;
+using map_strings = std::map<std::string, std::string>;
+
+namespace game
+{
 
 class Game
 {
@@ -32,7 +35,7 @@ private:
 public:
 	//constructor
 	//TODO: add arguments that we can fill once we initialize a new game. (Host, numPlayers, RoomId....)
-	Game() {} 
+	Game() {}
 
 	// getters
 	std::string getGameName() const;
@@ -65,5 +68,7 @@ public:
 	void setPerPlayer(std::vector<map_strings> gPerPlayer);
 	void setPerAudience(std::vector<map_strings> gPerPlayer);
 };
+
+} // namespace game
 
 #endif
