@@ -2,9 +2,9 @@
 #define PARSER_H
 
 #include <string>
+#include <utility>
 #include "Game.h"
 #include <nlohmann/json.hpp>
-#include <utility>
 
 #define JSON_CONFIGURATION "configuration"
 #define JSON_CONFIG_NAME "name"
