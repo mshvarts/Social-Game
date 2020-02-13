@@ -18,8 +18,21 @@ void GameParser::parseGameConfiguration(std::unique_ptr<game::Game> &game, const
     //   "prompt": <<Description of what data the owner should provide>>
     // }
     auto setupJson = configurationJson[JSON_SETUP];
-    game::map_strings setupMap = setupJson.get<game::map_strings>();
-
+    game::map_variant setupMap;
+    for (json::iterator it = setupJson.begin(); it != setupJson.end(); ++it)
+    {
+        std::string key = it.key();
+        boost::variant<int, std::string> val;
+        if (it.value().is_number())
+        {
+            val = static_cast<int>(it.value());
+        }
+        else
+        {
+            val = static_cast<std::string>(it.value());
+        }
+        setupMap.insert({key, val});
+    }
 }
 
 void GameParser::parseGame(std::unique_ptr<game::Game> &game)
