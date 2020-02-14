@@ -1,5 +1,8 @@
 #include "Game.h"
 
+namespace game
+{
+
 // getters
 std::string Game::getGameName() const
 {
@@ -81,3 +84,5 @@ void Game::setAudienceAllowed(bool gAudience)
 {
 	hasAudience = gAudience;
 }
+
+} // namespace game

@@ -1,50 +1,51 @@
 #include "GameParser.h"
 
-void GameParser::parseGameConfiguration(std::unique_ptr<Game> &game)
+namespace parser
 {
-    //TODO: Remove sample json once we know where to get the json from users.
-    auto JsonFile = R"(
+
+void GameParser::parseGameConfiguration(std::unique_ptr<game::Game> &game, const json &jsonFile)
+{
+    auto configurationJson = jsonFile[JSON_CONFIGURATION];
+
+    game->setGameName(configurationJson[JSON_CONFIG_NAME]);
+    game->setMaxNumberOfPlayers(configurationJson[JSON_CONFIG_PLAYERCOUNT][JSON_MAX]);
+    game->setMinNumberOfPlayers(configurationJson[JSON_CONFIG_PLAYERCOUNT][JSON_MIN]);
+    game->setIsGameBeingPlayed(configurationJson[JSON_AUDIENCE]);
+
+    //"setup" names a map of settings that can or must be configured by the owner of the game upon game creation. This can include such things as the numbers specifying the number of rounds to play. If the value for a setting is an integer, boolean, or string literal then that value constitutes the default value. These need not be changed by the owner upon creation but can be. Otherwise, the value must be a map of the form:
+    // {
+    //   "kind": <<data kind>>,
+    //   "prompt": <<Description of what data the owner should provide>>
+    // }
+    auto setupJson = configurationJson[JSON_SETUP];
+    game::map_variant setupMap;
+    for (json::iterator it = setupJson.begin(); it != setupJson.end(); ++it)
+    {
+        std::string key = it.key();
+        boost::variant<int, std::string> val;
+        if (it.value().is_number())
         {
-            "configuration": {
-                "name": "Rock, Paper, Scissors",
-                "player count": {"min": 2, "max": 4},
-                "audience": false,
-                "setup": {
-                "Rounds": 10
-                }
-            },
-
-            "constants": {
-                "weapons": [
-                { "name": "Rock",     "beats": "Scissors"},
-                { "name": "Paper",    "beats": "Rock"},
-                { "name": "Scissors", "beats": "Paper"}
-                ]
-            },
-
-            "variables": {
-                "winners": []
-            },
-
-            "per-player": {
-                "wins": 0
-            },
-
-            "per-audience": {}
+            val = static_cast<int>(it.value());
         }
-    )"_json;
+        else
+        {
+            val = static_cast<std::string>(it.value());
+        }
+        setupMap.insert({key, val});
+    }
+}
 
-    auto configurationJson = JsonFile["configuration"];
+void GameParser::parseGame(std::unique_ptr<game::Game> &game)
+{
+    //Get json from file and call the other parser functions.
+    std::ifstream ifs(filePath);
+    json jsonFile = json::parse(ifs);
 
-    game->setGameName(configurationJson["name"]);
-    game->setMaxNumberOfPlayers(configurationJson["player count"]["max"]);
-    game->setMinNumberOfPlayers(configurationJson["player count"]["min"]);
-    game->setIsGameBeingPlayed(configurationJson["audience"]);
-
-    //TODO: add more complex json items to the Game class.
+    parseGameConfiguration(game, jsonFile);
 }
 
 bool GameParser::validateGameJSON()
 {
     return true;
 }
+} // namespace parser

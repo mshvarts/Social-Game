@@ -5,8 +5,12 @@
 #include <vector>
 #include <map>
 #include <list>
+#include <boost/variant.hpp>
 
-typedef std::map<std::string, std::string> map_strings;
+namespace game
+{
+
+using map_variant = std::map<std::string, boost::variant<int, std::string>>;
 
 class Game
 {
@@ -22,17 +26,17 @@ private:
 	bool isBeingPlayed; // this determines if the game is in play or not
 	bool hasAudience;   // if other people can join the game and watch others play
 
-	map_strings setup; // configuration by the owner on game creation
-	std::map<std::string, std::vector<map_strings>> constants;
-	std::map<std::string, std::vector<map_strings>> variables;
-	std::vector<map_strings> perPlayer;
-	std::vector<map_strings> perAudience;
+	map_variant setup; // configuration by the owner on game creation
+	std::map<std::string, std::vector<map_variant>> constants;
+	std::map<std::string, std::vector<map_variant>> variables;
+	std::vector<map_variant> perPlayer;
+	std::vector<map_variant> perAudience;
 	// TODO: add Rule rules class which will contain all the rules of the game.;
 
 public:
 	//constructor
 	//TODO: add arguments that we can fill once we initialize a new game. (Host, numPlayers, RoomId....)
-	Game() {} 
+	Game() {}
 
 	// getters
 	std::string getGameName() const;
@@ -43,11 +47,11 @@ public:
 	int getMinNumberOfPlayers() const;
 	bool isGameBeingPlayed() const;
 	bool isAudienceAllowed() const;
-	map_strings getGameSetup() const;
-	std::map<std::string, std::vector<map_strings>> getGameConstants() const;
-	std::map<std::string, std::vector<map_strings>> getGameVairables() const;
-	std::vector<map_strings> getPerPlayer();
-	std::vector<map_strings> getPerAudience();
+	map_variant getGameSetup() const;
+	std::map<std::string, std::vector<map_variant>> getGameConstants() const;
+	std::map<std::string, std::vector<map_variant>> getGameVairables() const;
+	std::vector<map_variant> getPerPlayer();
+	std::vector<map_variant> getPerAudience();
 
 	//setters
 	void setGameName(std::string gName);
@@ -59,11 +63,13 @@ public:
 	void setIsGameBeingPlayed(bool gIsPlaying);
 	void setAudienceAllowed(bool gAudience);
 
-	void setSetup(map_strings gSetup);
-	void setConstants(std::map<std::string, std::vector<map_strings>> gConstants);
-	void setVariables(std::map<std::string, std::vector<map_strings>> gVariables);
-	void setPerPlayer(std::vector<map_strings> gPerPlayer);
-	void setPerAudience(std::vector<map_strings> gPerPlayer);
+	void setSetup(map_variant gSetup);
+	void setConstants(std::map<std::string, std::vector<map_variant>> gConstants);
+	void setVariables(std::map<std::string, std::vector<map_variant>> gVariables);
+	void setPerPlayer(std::vector<map_variant> gPerPlayer);
+	void setPerAudience(std::vector<map_variant> gPerPlayer);
 };
+
+} // namespace game
 
 #endif
