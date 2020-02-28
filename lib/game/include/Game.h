@@ -9,11 +9,11 @@
 
 namespace game {
 
-using Map_of_strings = std::map<std::string, std::string>;
+using Map_of_values = std::map<std::string, boost::variant<std::string, int>>;
 using List_of_values = std::vector<boost::variant<std::string, int>>;
 
 // Values may themselves be (1) maps from names to values, (2) lists of values, or (3) literal strings, numbers, or booleans
-using Value = boost::variant<Map_of_strings, List_of_values, std::string, int, bool>;
+using Value = boost::variant<Map_of_values, List_of_values, std::string, int, bool>;
 
 struct PlayerCount {
     int max;
@@ -24,19 +24,19 @@ struct Configuration {
     std::string name;
     PlayerCount playerCount;
     bool audience;
-    Map_of_strings setup;
+    Map_of_values setup;
 };
 
 // Constants and variables look the same now but that might change in the
 // future so i am keeping them separate. Same goes for perPlayer and perAudience
 struct Constant {
     std::string name;
-    std::vector<Map_of_strings> values;
+    std::vector<Map_of_values> values;
 };
 
 struct Variable {
     std::string name;
-    std::vector<Map_of_strings> values;
+    std::vector<Map_of_values> values;
 };
 
 struct PerPlayer {
@@ -105,11 +105,13 @@ public:
     [[nodiscard]] std::vector<PerAudience> getPerAudience() const;
 
     //setters
-    void setHostName(std::string hName) noexcept;
+    void setHostName(std::string& hName) noexcept;
 
-    void setPlayerNames(std::vector<std::string> pNames) noexcept;
+    void setPlayerNames(std::vector<std::string>& pNames) noexcept;
 
     void setIsGameBeingPlayed(bool gIsPlaying) noexcept;
+
+    void setConfiguration(const Configuration &configuration);
 };
 
 }

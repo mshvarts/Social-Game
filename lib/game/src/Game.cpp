@@ -56,27 +56,27 @@ std::vector<Constant> Game::getGameConstants() const
 
 std::vector<Variable> Game::getGameVariables() const
 {
-    return std::vector<Variable>();
+    return variables;
 }
 
 std::vector<PerPlayer> Game::getPerPlayer() const
 {
-    return std::vector<PerPlayer>();
+    return perPlayer;
 }
 
 std::vector<PerAudience> Game::getPerAudience() const
 {
-    return std::vector<PerAudience>();
+    return perAudience;
 }
 
 //setters
 
-void Game::setHostName(std::string hName) noexcept
+void Game::setHostName(std::string& hName) noexcept
 {
     hostName = hName;
 }
 
-void Game::setPlayerNames(std::vector<std::string> pNames) noexcept
+void Game::setPlayerNames(std::vector<std::string>& pNames) noexcept
 {
     playerNames = std::move(pNames);
 }
@@ -84,6 +84,10 @@ void Game::setPlayerNames(std::vector<std::string> pNames) noexcept
 void Game::setIsGameBeingPlayed(bool gIsPlaying) noexcept
 {
     isBeingPlayed = gIsPlaying;
+}
+
+void Game::setConfiguration(const Configuration& gConfiguration) {
+    configuration = std::move(gConfiguration);
 }
 
 } // namespace game
