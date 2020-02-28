@@ -9,7 +9,7 @@
 
 #define JSON_CONFIGURATION "configuration"
 #define JSON_CONFIG_NAME "name"
-#define JSON_CONFIG_PLAYERCOUNT "player count"
+#define JSON_CONFIG_PLAYER_COUNT "player count"
 #define JSON_MAX "max"
 #define JSON_MIN "min"
 #define JSON_AUDIENCE "audience"
