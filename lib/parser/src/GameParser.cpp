@@ -25,7 +25,7 @@ void GameParser::parseGameConfiguration(std::unique_ptr<game::Game> &game, const
     std::transform(setupJson.items().begin(), setupJson.items().end(), std::inserter(setup, setup.end()),
                    [](const auto& element){
                         boost::variant<std::string, int> value;
-                       if (element.value().isNumber())
+                       if (element.value().is_number())
                        {
                            value = static_cast<int>(element.value());
                        }
