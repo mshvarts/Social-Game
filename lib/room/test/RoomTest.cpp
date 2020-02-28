@@ -10,4 +10,7 @@ TEST(RoomTest, testName)
 
 	room.setRoomName("Room2");
 	EXPECT_EQ(room.getRoomName(), "Room2");
+	EXPECT_NE(room.getRoomName(), "Room1");
 }
+
+
