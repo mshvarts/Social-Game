@@ -6,7 +6,7 @@ namespace game
 // getters
 std::string Game::getGameName() const
 {
-	return name;
+	return configuration.name;
 }
 
 std::string Game::getHostName() const
@@ -21,17 +21,17 @@ std::vector<std::string> Game::getPlayerNames() const
 
 int Game::getPlayerCount() const
 {
-	return playerCount;
+	return playerNames.size();
 }
 
 int Game::getMaxNumberOfPlayers() const
 {
-	return maxPlayerCount;
+	return configuration.playerCount.max;
 }
 
 int Game::getMinNumberOfPlayers() const
 {
-	return minPlayerCount;
+	return configuration.playerCount.min;
 }
 
 bool Game::isGameBeingPlayed() const
@@ -41,48 +41,53 @@ bool Game::isGameBeingPlayed() const
 
 bool Game::isAudienceAllowed() const
 {
-	return hasAudience;
+	return configuration.audience;
 }
 
-// setters
-
-void Game::setGameName(std::string gName)
+Configuration Game::getConfiguration() const
 {
-	name = gName;
+    return Configuration();
 }
 
-void Game::setHostName(std::string hName)
+std::vector<Constant> Game::getGameConstants() const
 {
-	hostName = hName;
+    return std::vector<Constant>();
 }
 
-void Game::setPlayerCount(int pCount)
+std::vector<Variable> Game::getGameVariables() const
 {
-	playerCount = pCount;
+    return variables;
 }
 
-void Game::setPlayerNames(std::vector<std::string> pNames)
+std::vector<PerPlayer> Game::getPerPlayer() const
 {
-	playerNames = pNames;
+    return perPlayer;
 }
 
-void Game::setMaxNumberOfPlayers(int gMaxCount)
+std::vector<PerAudience> Game::getPerAudience() const
 {
-	maxPlayerCount = gMaxCount;
+    return perAudience;
 }
 
-void Game::setMinNumberOfPlayers(int gMinCount)
+//setters
+
+void Game::setHostName(std::string& hName) noexcept
 {
-	minPlayerCount = gMinCount;
-}
-void Game::setIsGameBeingPlayed(bool gIsPlaying)
-{
-	isBeingPlayed = gIsPlaying;
+    hostName = hName;
 }
 
-void Game::setAudienceAllowed(bool gAudience)
+void Game::setPlayerNames(std::vector<std::string>& pNames) noexcept
 {
-	hasAudience = gAudience;
+    playerNames = std::move(pNames);
+}
+
+void Game::setIsGameBeingPlayed(bool gIsPlaying) noexcept
+{
+    isBeingPlayed = gIsPlaying;
+}
+
+void Game::setConfiguration(const Configuration& gConfiguration) {
+    configuration = std::move(gConfiguration);
 }
 
 } // namespace game

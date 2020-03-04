@@ -7,69 +7,112 @@
 #include <list>
 #include <boost/variant.hpp>
 
-namespace game
-{
+namespace game {
 
-using map_variant = std::map<std::string, boost::variant<int, std::string>>;
+using Map_of_values = std::map<std::string, boost::variant<std::string, int>>;
+using List_of_values = std::vector<boost::variant<std::string, int>>;
 
-class Game
-{
+// Values may themselves be (1) maps from names to values, (2) lists of values, or (3) literal strings, numbers, or booleans
+using Value = boost::variant<Map_of_values, List_of_values, std::string, int, bool>;
 
-private:
-	std::string name; // name of the game
-	std::string hostName;
-	std::vector<std::string> playerNames;
-	int playerCount; // number of players in the game
-	int maxPlayerCount;
-	int minPlayerCount;
-
-	bool isBeingPlayed; // this determines if the game is in play or not
-	bool hasAudience;   // if other people can join the game and watch others play
-
-	map_variant setup; // configuration by the owner on game creation
-	std::map<std::string, std::vector<map_variant>> constants;
-	std::map<std::string, std::vector<map_variant>> variables;
-	std::vector<map_variant> perPlayer;
-	std::vector<map_variant> perAudience;
-	// TODO: add Rule rules class which will contain all the rules of the game.;
-
-public:
-	//constructor
-	//TODO: add arguments that we can fill once we initialize a new game. (Host, numPlayers, RoomId....)
-	Game() {}
-
-	// getters
-	std::string getGameName() const;
-	std::string getHostName() const;
-	std::vector<std::string> getPlayerNames() const;
-	int getPlayerCount() const;
-	int getMaxNumberOfPlayers() const;
-	int getMinNumberOfPlayers() const;
-	bool isGameBeingPlayed() const;
-	bool isAudienceAllowed() const;
-	map_variant getGameSetup() const;
-	std::map<std::string, std::vector<map_variant>> getGameConstants() const;
-	std::map<std::string, std::vector<map_variant>> getGameVairables() const;
-	std::vector<map_variant> getPerPlayer();
-	std::vector<map_variant> getPerAudience();
-
-	//setters
-	void setGameName(std::string gName);
-	void setHostName(std::string hName);
-	void setPlayerNames(std::vector<std::string> pNames);
-	void setPlayerCount(int pCount);
-	void setMaxNumberOfPlayers(int gMaxCount);
-	void setMinNumberOfPlayers(int gMinCount);
-	void setIsGameBeingPlayed(bool gIsPlaying);
-	void setAudienceAllowed(bool gAudience);
-
-	void setSetup(map_variant gSetup);
-	void setConstants(std::map<std::string, std::vector<map_variant>> gConstants);
-	void setVariables(std::map<std::string, std::vector<map_variant>> gVariables);
-	void setPerPlayer(std::vector<map_variant> gPerPlayer);
-	void setPerAudience(std::vector<map_variant> gPerPlayer);
+struct PlayerCount {
+    int max;
+    int min;
 };
 
-} // namespace game
+struct Configuration {
+    std::string name;
+    PlayerCount playerCount;
+    bool audience;
+    Map_of_values setup;
+};
 
+// Constants and variables look the same now but that might change in the
+// future so i am keeping them separate. Same goes for perPlayer and perAudience
+struct Constant {
+    std::string name;
+    std::vector<Map_of_values> values;
+};
+
+struct Variable {
+    std::string name;
+    std::vector<Map_of_values> values;
+};
+
+struct PerPlayer {
+    std::string name;
+    Value value;
+};
+
+struct PerAudience {
+    std::string name;
+    Value value;
+};
+
+class Game {
+
+private:
+    std::string hostName;
+    std::vector<std::string> playerNames;
+    bool isBeingPlayed; // this determines if the game is in play or not
+
+    Configuration configuration;
+    std::vector<Constant> constants;
+    std::vector<Variable> variables;
+    std::vector<PerPlayer> perPlayer;
+    std::vector<PerAudience> perAudience;
+
+    // TODO: add Rule rules class which will contain all the rules of the game.;
+
+public:
+    //constructor
+    Game(Configuration configuration,
+            std::vector<Constant> constants,
+            std::vector<Variable> variables,
+            std::vector<PerPlayer> perPlayer,
+            std::vector<PerAudience> perAudience ) :
+                configuration{std::move(configuration)},
+                constants{std::move(constants)},
+                variables{std::move(variables)},
+                perPlayer{std::move(perPlayer)},
+                perAudience{std::move(perAudience)} {}
+
+    // getters
+    [[nodiscard]] std::string getGameName() const;
+
+    [[nodiscard]] std::string getHostName() const;
+
+    [[nodiscard]] std::vector<std::string> getPlayerNames() const;
+
+    [[nodiscard]] int getPlayerCount() const;
+
+    [[nodiscard]] int getMaxNumberOfPlayers() const;
+
+    [[nodiscard]] int getMinNumberOfPlayers() const;
+
+    [[nodiscard]] bool isGameBeingPlayed() const;
+
+    [[nodiscard]] bool isAudienceAllowed() const;
+
+    [[nodiscard]] Configuration getConfiguration() const;
+
+    [[nodiscard]] std::vector<Constant> getGameConstants() const;
+
+    [[nodiscard]] std::vector<Variable> getGameVariables() const;
+
+    [[nodiscard]] std::vector<PerPlayer> getPerPlayer() const;
+
+    [[nodiscard]] std::vector<PerAudience> getPerAudience() const;
+
+    //setters
+    void setHostName(std::string& hName) noexcept;
+
+    void setPlayerNames(std::vector<std::string>& pNames) noexcept;
+
+    void setIsGameBeingPlayed(bool gIsPlaying) noexcept;
+
+    void setConfiguration(const Configuration &configuration);
+};
+
+}
 #endif
