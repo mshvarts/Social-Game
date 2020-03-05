@@ -3,12 +3,13 @@
 Team Francesinha Social Gaming Project
 Members:
 
-- John Wu (wujohnw)
-- Max Shvartsman (mshvarts)
-- Camilo Vasquez (cvasquez)
-- Eric Kozak (ekkozak)
-- Langjia Wu (langjiaw)
-- Dylan Woods (jdwoods)
+- John
+- Max
+- Kirat
+- Camilo
+- Eric
+- Lang
+- Dylan
 
 ## Dependencies
 
@@ -18,7 +19,6 @@ This project requires:
 2. Boost >= 1.66
 3. CMake >= 3.12
 4. nlohmann_json >= 3.2.0 (https://github.com/nlohmann/json)
-5. wxWidget >= 3.0.4
 
 ## Building with CMake
 

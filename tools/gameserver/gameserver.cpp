@@ -17,7 +17,6 @@
 #include <unistd.h>
 #include <vector>
 #include <ctime>
-#include <stdlib.h>
 
 using networking::Connection;
 using networking::ConnectionHash;
@@ -127,8 +126,6 @@ int main(int argc, char *argv[])
               << "  e.g. " << argv[0] << " 4002 ./webgame.html\n";
     return 1;
   }
-
-  srand(time(NULL));
 
   connectionMapper = std::make_unique<ConnectionMapper>();
   serverEngine = std::make_unique<ServerEngine>();
