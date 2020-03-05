@@ -5,7 +5,7 @@ std::string User::getName() const
     return displayName;
 }
 
-UserId User::getUserId() const {
+int User::getUserId() const {
 	return userId;
 }
 
