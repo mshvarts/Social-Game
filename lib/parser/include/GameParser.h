@@ -7,18 +7,30 @@
 #include <fstream> 
 #include <nlohmann/json.hpp>
 
-#define JSON_CONFIGURATION "configuration"
-#define JSON_CONFIG_NAME "name"
-#define JSON_CONFIG_PLAYER_COUNT "player count"
-#define JSON_MAX "max"
-#define JSON_MIN "min"
-#define JSON_AUDIENCE "audience"
-#define JSON_SETUP "setup"
-
 using nlohmann::json;
 
 namespace parser
 {
+
+enum class KeyNames{
+    Configuration,
+    Name,
+    PlayerCount,
+    Max,
+    Min,
+    Audience,
+    Setup
+};
+
+std::unordered_map<KeyNames, std::string> KeyNameMap{
+        {KeyNames::Configuration, "configuration"},
+        {KeyNames::Name, "name"},
+        {KeyNames::PlayerCount, "player count"},
+        {KeyNames::Max, "max"},
+        {KeyNames::Min, "min"},
+        {KeyNames::Audience, "audience"},
+        {KeyNames::Setup,"setup"},
+};
 
 class GameParser
 {
@@ -29,7 +41,7 @@ public:
     explicit GameParser(std::string filePath) : filePath(std::move(filePath)) {}
     void parseGame(std::unique_ptr<game::Game> &game);
     void parseGameConfiguration(std::unique_ptr<game::Game> &game, const json &jsonFile);
-    bool validateGameJSON();
+    bool validateGameConfigJson(const json &jsonConfigFile);
 };
 
 } // namespace parser
