@@ -5,14 +5,13 @@ namespace parser
 
 void GameParser::parseGameConfiguration(std::unique_ptr<game::Game> &game, const json &jsonFile)
 {
-    auto configurationJson = jsonFile[JSON_CONFIGURATION];
-
+    auto configurationJson = jsonFile[KeyNameMap[KeyNames::Configuration]];
     game::Configuration config;
 
-    config.name = configurationJson[JSON_CONFIG_NAME];
-    config.playerCount.max = configurationJson[JSON_CONFIG_PLAYER_COUNT][JSON_MAX];
-    config.playerCount.min = configurationJson[JSON_CONFIG_PLAYER_COUNT][JSON_MIN];
-    config.audience = configurationJson[JSON_AUDIENCE];
+    config.name = configurationJson[KeyNameMap[KeyNames::Name]];
+    config.playerCount.max = configurationJson[KeyNameMap[KeyNames::PlayerCount]][KeyNameMap[KeyNames::Max]];
+    config.playerCount.min = configurationJson[KeyNameMap[KeyNames::PlayerCount]][KeyNameMap[KeyNames::Min]];
+    config.audience = configurationJson[KeyNameMap[KeyNames::Audience]];
 
     //"setup" names a map of settings that can or must be configured by the owner of the game upon game creation. This can include such things as the numbers specifying the number of rounds to play. If the value for a setting is an integer, boolean, or string literal then that value constitutes the default value. These need not be changed by the owner upon creation but can be. Otherwise, the value must be a map of the form:
     // {
@@ -21,7 +20,7 @@ void GameParser::parseGameConfiguration(std::unique_ptr<game::Game> &game, const
     // }
 
     game::Map_of_values setup;
-    auto setupJson = configurationJson[JSON_SETUP];
+    auto setupJson = configurationJson[KeyNameMap[KeyNames::Setup]];
     std::transform(setupJson.items().begin(), setupJson.items().end(), std::inserter(setup, setup.end()),
                    [](const auto& element){
                         boost::variant<std::string, int> value;
@@ -49,8 +48,15 @@ void GameParser::parseGame(std::unique_ptr<game::Game> &game)
     parseGameConfiguration(game, jsonFile);
 }
 
-bool GameParser::validateGameJSON()
+bool GameParser::validateGameConfigJson(const json &jsonConfigFile)
 {
-    return true;
+    // For now the validation will just be a simple check to see if the keys exist.
+    auto found = std::all_of(jsonConfigFile.items().begin(), jsonConfigFile.items().end(), [](const auto& element){
+        //check if key exists in our KeyMap
+        std::string key = element.key();
+        return KeyNameMap.end() != std::find_if(KeyNameMap.begin(), KeyNameMap.end(), [key](auto& pair) {return pair.second == key;});
+    } );
+
+    return found;
 }
 } // namespace parser
