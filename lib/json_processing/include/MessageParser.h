@@ -8,7 +8,6 @@
 #include <utility>
 #include <functional>
 
-const long unsigned int SERVER_USER_ID = -1;
 const char COMMAND_DELIMETER = '/';
 
 class MessageParser {
