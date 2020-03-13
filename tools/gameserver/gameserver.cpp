@@ -75,7 +75,7 @@ processMessages(Server &server, const std::deque<ConnectionMessage> &incoming)
     {
     	auto messageUserId = connectionMapper->getUserIdForConnection(message.connection);
     	EngineMessage engineMessage{messageUserId, message.text};
-		std::cout << "zzz";
+
     	serverEngine->processMessage(engineMessage);
 
     	auto engineResponse = serverEngine->getMessages();

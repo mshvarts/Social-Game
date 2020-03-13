@@ -9,6 +9,10 @@ UserId User::getUserId() const {
 	return userId;
 }
 
+std::string User::getCurrentRoom() const {
+	return currentRoom;
+}
+
 void User::setName(std::string name)
 {
 	displayName = std::move(name);
