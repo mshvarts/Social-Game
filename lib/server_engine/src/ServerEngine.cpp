@@ -27,8 +27,14 @@ void ServerEngine::logOut(UserId userId) {
 	users.erase(userId);
 }
 
-void ServerEngine::chatMessage(UserId userId, const std::string& text) {
+void ServerEngine::sendMessageToAll(const std::string& message) {
 	for(auto const &userEntry : users) {
-		outgoing.push_back(EngineMessage{userEntry.first, std::to_string(userId) + " > " + text});
+		auto chatMessage = EngineMessage{ userEntry.first, message };
+		outgoing.push_back(chatMessage);
 	}
+}
+
+void ServerEngine::sendMessage(UserId toUserId, const std::string& message) { 
+	auto chatMessage = EngineMessage{ toUserId, message };
+	outgoing.push_back(chatMessage);
 }

@@ -36,7 +36,9 @@ public:
 	 * it creates a circular dependency. Maybe something like how the
 	 * server class is separated from it's implementation in the
 	 * network code? */
-	void chatMessage(UserId userId, const std::string& text);
+
+	void sendMessage(UserId toUserId, const std::string& text);
+	void sendMessageToAll(const std::string& text);
 
 private:
 	UserMap users;

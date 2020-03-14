@@ -35,7 +35,7 @@ bool Room::addUser(UserId user, const std::string& passEntered) {
 	return false;
 }
 
-/* Adds user to userList if there is room */
+/* Adds user to userList if there is an open spot */
 bool Room::addUser(UserId user) {
 	return addUser(user, "");
 }
