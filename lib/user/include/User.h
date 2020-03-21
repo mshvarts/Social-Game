@@ -3,32 +3,33 @@
 
 #include <string>
 #include <utility>
+#include "Room.h"
 
-using UserId = unsigned long;
+using UserId = long unsigned int;
 
 class User
 {
 private:
 	UserId userId; /* a unique ID to be used by the backend to designate specific users. Generated randomly on initialization */
 	std::string displayName;
-	std::string currentRoom;
+	Room* currentRoom;
 
 public:
     // Constructor
     User(UserId userId, std::string name) :
         userId(userId),
         displayName(std::move(name)),
-		currentRoom("None")
+		currentRoom(nullptr)
         {};
 
     // Getters
     [[nodiscard]] std::string getName() const;
 	[[nodiscard]] UserId getUserId() const;
-	[[nodiscard]] std::string getCurrentRoom() const;
+	[[nodiscard]] Room* getCurrentRoom() const;
 
     // Setters
     void setName(std::string pName);
-    void setCurrentRoom(const std::string& roomName);
+    void setCurrentRoom(Room* roomName);
 	bool operator==(const User& other);
 };
 

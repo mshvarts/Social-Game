@@ -8,14 +8,14 @@
       body,
       input,
       select,
-      textarea {
+	  textarea {
         background: #031e11;
         color: #10fd60;
       }
       #messages {
-        width: 48em;
+        width: 777;
+		height: 225px;
         background-color: #254010;
-        height: 5em;
         border: solid 1px #cccccc;
         margin-bottom: 5px;
         overflow-y: hidden;
@@ -40,7 +40,7 @@
         text-align:center;
       }
       #content { 
-        height: 20em;
+        height: 10em;
         position:relative;
       }
       #goBack {
@@ -156,18 +156,15 @@
     <div id="content">
         <center><h1>Web Game Fluffernutter</h1></center><br>
         
-        <div id="outputSection"></div>
-        <!--Game Francesinha Server: <input id="uri" size="40" />
-        <button id="connect">Connect</button>
-        <button id="disconnect">Disconnect</button><br />-->
+        <!--<div id="outputSection"></div>-->
     </div> 
     <br><hr>
     
-    <textarea rows="4" cols="40" id="messages"></textarea>
+    <textarea rows="6" cols="100" id="messages"></textarea>
 
     <div style="margin-bottom: 5px;">
       Enter Message:<br />
-      <input id="sendMessage" size="80" value="" />
+      <input id="sendMessage" size="90" value="" />
       <button id="send">Send</button>
     </div>
     

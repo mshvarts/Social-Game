@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "User.h"
-#include "Room.h"
 
 struct EngineMessage {
 	UserId userId;
@@ -18,6 +17,7 @@ struct EngineMessage {
 };
 
 using UserMap = std::unordered_map<UserId, User>;
+using RoomMap = std::unordered_map<std::string, Room>;
 
 class ServerEngine {
 public:
@@ -25,6 +25,12 @@ public:
 
 	void logIn(UserId userId);
 	void logOut(UserId userId);
+	void registerRoom(Room room);
+	void unregisterRoom(Room room);
+	std::vector<Room> getRooms();
+
+	User* findUserById(UserId userId);
+	Room* findRoomByName(const std::string& roomName);
 
 	void processMessage(const EngineMessage& message);
 	std::vector<EngineMessage> getMessages();
@@ -42,6 +48,7 @@ public:
 
 private:
 	UserMap users;
+	RoomMap rooms;
 
 	std::vector<EngineMessage> outgoing;
 };
