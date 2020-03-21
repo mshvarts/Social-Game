@@ -20,7 +20,11 @@ public:
 	static bool isCommand(const std::string& commandText);
 	static std::string extractArguments(const std::string& commandText);
 	static void showRoomInfo(ServerEngine *engine, const EngineMessage& message);
-	static void showHelp(ServerEngine *engine, const EngineMessage& message);
+	static void joinRoom(ServerEngine *engine, const EngineMessage& message);
+	static void leaveRoom(ServerEngine *engine, const EngineMessage& message);
+	static void listRooms(ServerEngine *engine, const EngineMessage& message);
+	static void kickPlayer(ServerEngine *engine, const EngineMessage& message);
+	static void showCommands(ServerEngine *engine, const EngineMessage& message);
 	static bool isValidCommand(const std::string& commandText, const EngineMessage& message);
 };
 

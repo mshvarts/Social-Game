@@ -27,6 +27,44 @@ void ServerEngine::logOut(UserId userId) {
 	users.erase(userId);
 }
 
+void ServerEngine::registerRoom(Room room) {
+	rooms.emplace(room.getRoomName(), room);
+}
+
+void ServerEngine::unregisterRoom(Room room) {
+	rooms.erase(room.getRoomName());
+}
+
+User* ServerEngine::findUserById(UserId userId) {
+	auto user = users.find(userId);
+
+	if (user == users.end()) {
+		return nullptr; // not found
+	}
+	else {
+		return &user->second; 
+	}
+}
+
+Room* ServerEngine::findRoomByName(const std::string& roomName) {
+	auto room = rooms.find(roomName);
+
+	if (room == rooms.end()) {
+		return nullptr;
+	}
+	else {
+		return &room->second;
+	}
+}
+
+std::vector<Room> ServerEngine::getRooms() {
+	std::vector<Room> roomList;
+	for (auto room : rooms) {
+		roomList.push_back(room.second);
+	}
+	return roomList;
+}
+
 void ServerEngine::sendMessageToAll(const std::string& message) {
 	for(auto const &userEntry : users) {
 		auto chatMessage = EngineMessage{ userEntry.first, message };

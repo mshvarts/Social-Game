@@ -13,6 +13,7 @@ target_include_directories(user
 
 target_link_libraries(user
 	PUBLIC
+	room
 	)
 
 set_target_properties(user

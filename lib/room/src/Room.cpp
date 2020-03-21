@@ -13,6 +13,14 @@ void Room::removePassword() {
 	password = "";
 }
 
+game::Game* Room::getGame() const {
+	return currentGame;
+}
+
+void Room::setGame(game::Game* game) {
+	currentGame = game;
+}
+
 void Room::setPassword(std::string roomPassword) {
 	locked = true;
 	password = std::move(roomPassword);
@@ -20,6 +28,10 @@ void Room::setPassword(std::string roomPassword) {
 
 void Room::setMaxSize(int maxNumOfPlayers) {
 	maxSize = maxNumOfPlayers;
+}
+
+size_t Room::getRoomMaxSize() const {
+	return maxSize;
 }
 
 /* Adds user to userList if there is room and the password is correct */
