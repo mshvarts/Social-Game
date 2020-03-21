@@ -86,7 +86,7 @@ void Game::setIsGameBeingPlayed(bool gIsPlaying) noexcept
     isBeingPlayed = gIsPlaying;
 }
 
-void Game::setConfiguration(const Configuration& gConfiguration) {
+void Game::setConfiguration(Configuration &gConfiguration) {
     configuration = std::move(gConfiguration);
 }
 
