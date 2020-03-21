@@ -80,8 +80,8 @@ TEST(ParseSetupTest, ConfigurationTest)
 
     // setup is of type --->  std::map<std::string, boost::variant<std::string, int>>;
 
-    auto expSetupKeysIsFound = setup.find("Rounds") == setup.end();
+    auto expSetupKeysIsFound = setup.find("Rounds") != setup.end();
     auto roundsValue = setup.at("Rounds");
     ASSERT_EQ(true, expSetupKeysIsFound);
-//    ASSERT_EQ(10, roundsValue);
+    ASSERT_EQ(10, boost::get<int>(roundsValue));
 }
