@@ -3,7 +3,7 @@
 namespace parser
 {
 
-void GameParser::parseGameConfiguration(std::unique_ptr<game::Game> &game, const json &jsonFile)
+void GameParser::parseGameConfiguration(game::Game &game, const json &jsonFile)
 {
     auto configurationJson = jsonFile[CONFIGURATION_JSON];
     game::Configuration config;
@@ -36,10 +36,10 @@ void GameParser::parseGameConfiguration(std::unique_ptr<game::Game> &game, const
                        return std::make_pair(element.key(),value);
     });
     config.setup = std::move(setup);
-    game->setConfiguration(config);
+    game.setConfiguration(config);
 }
 
-void GameParser::parseGame(std::unique_ptr<game::Game> &game)
+void GameParser::parseGame(game::Game &game)
 {
     //Get json from file and call the other parser functions.
 //    std::ifstream ifs(jsonString);

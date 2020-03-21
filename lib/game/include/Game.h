@@ -112,7 +112,7 @@ public:
 
     void setIsGameBeingPlayed(bool gIsPlaying) noexcept;
 
-    void setConfiguration(Configuration& configuration);
+    void setConfiguration(Configuration configuration);
 };
 
 }

@@ -27,8 +27,8 @@ private:
 
 public:
     explicit GameParser(std::string jsonString) : jsonString(std::move(jsonString)) {}
-    void parseGame(std::unique_ptr<game::Game> &game);
-    void parseGameConfiguration(std::unique_ptr<game::Game> &game, const json &jsonFile);
+    void parseGame(game::Game &game);
+    void parseGameConfiguration(game::Game &game, const json &jsonFile);
     bool validateGameConfigJson(const json &jsonConfigFile);
 };
 

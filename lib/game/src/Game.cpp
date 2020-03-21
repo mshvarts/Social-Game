@@ -46,7 +46,7 @@ bool Game::isAudienceAllowed() const
 
 Configuration Game::getConfiguration() const
 {
-    return Configuration();
+    return configuration;
 }
 
 std::vector<Constant> Game::getGameConstants() const
@@ -86,8 +86,8 @@ void Game::setIsGameBeingPlayed(bool gIsPlaying) noexcept
     isBeingPlayed = gIsPlaying;
 }
 
-void Game::setConfiguration(Configuration &gConfiguration) {
-    configuration = std::move(gConfiguration);
+void Game::setConfiguration(Configuration gConfiguration) {
+    configuration = gConfiguration;
 }
 
 } // namespace game
