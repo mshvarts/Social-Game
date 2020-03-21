@@ -65,7 +65,8 @@ private:
     // TODO: add Rule rules class which will contain all the rules of the game.;
 
 public:
-    //constructor
+    // constructors
+    Game(){}
     Game(Configuration configuration,
             std::vector<Constant> constants,
             std::vector<Variable> variables,
@@ -111,7 +112,7 @@ public:
 
     void setIsGameBeingPlayed(bool gIsPlaying) noexcept;
 
-    void setConfiguration(const Configuration &configuration);
+    void setConfiguration(Configuration configuration);
 };
 
 }

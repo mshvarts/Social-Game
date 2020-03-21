@@ -24,6 +24,7 @@ target_link_libraries(gameserver
   game
   user
   server_engine
+  parser
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
 )
