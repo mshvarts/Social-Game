@@ -43,12 +43,6 @@ void GameParser::parseConstants(game::Game &game, const json &jsonFile)
 {
     auto constantsJson = jsonFile[CONSTANTS_JSON];
 
-    //struct Constant {
-    //    std::string name;
-    //    std::vector<Map_of_values> values;
-    //};
-    // std::map<std::string, boost::variant<std::string, int>>;
-
     game::Constants constants;
     std::transform(constantsJson.items().begin(), constantsJson.items().end(), std::inserter(constants.list, constants.list.end()),
                    [](const auto& element){
@@ -76,7 +70,30 @@ void GameParser::parseConstants(game::Game &game, const json &jsonFile)
 
 void GameParser::parseVariables(game::Game &game, const json &jsonFile)
 {
+    auto variablesJson = jsonFile[VARIABLES_JSON];
 
+    game::Variables variables;
+    std::transform(variablesJson.items().begin(), variablesJson.items().end(), std::inserter(variables.list, variables.list.end()),
+                   [](const auto& element){
+                       game::Value value;
+                       game::Variable currentVariable;
+                       if (element.value().is_number())
+                       {
+                           value = static_cast<int>(element.value());
+                       }
+                       else if (element.value().is_string())
+                       {
+                           value = static_cast<std::string>(element.value());
+                       }
+                       else if (element.value().is_array())
+                       {
+                       }
+                       currentVariable.name = element.key();
+                       currentVariable.value = value;
+                       return currentVariable;
+                   });
+
+    game.setVariables(variables);
 }
 
 void GameParser::parseGame(game::Game &game)

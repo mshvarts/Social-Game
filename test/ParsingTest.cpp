@@ -147,8 +147,8 @@ TEST(ParseVariables, ConstantTests)
     parser.parseVariables(testGame, jsonFile);
     auto variables = testGame.getGameVariables();
     auto firstVar = variables.list.at(0);
-    ASSERT_EQ(3, variables.list.size());
-    ASSERT_EQ("hands", firstVar.name);
+    ASSERT_EQ(1, variables.list.size());
+    ASSERT_EQ("winners", firstVar.name);
 }
 
 TEST(validateGameConfigJson, ConfigurationTest)
