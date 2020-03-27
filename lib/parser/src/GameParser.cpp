@@ -39,6 +39,16 @@ void GameParser::parseGameConfiguration(game::Game &game, const json &jsonFile)
     game.setConfiguration(config);
 }
 
+void GameParser::parseConstants(game::Game &game, const json &jsonFile)
+{
+
+}
+
+void GameParser::parseVariables(game::Game &game, const json &jsonFile)
+{
+
+}
+
 void GameParser::parseGame(game::Game &game)
 {
     //Get json from file and call the other parser functions.

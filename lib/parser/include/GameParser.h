@@ -33,6 +33,8 @@ public:
     explicit GameParser(std::string jsonString) : jsonString(std::move(jsonString)) {}
     void parseGame(game::Game &game);
     void parseGameConfiguration(game::Game &game, const json &jsonFile);
+    void parseVariables(game::Game &game, const json &jsonFile);
+    void parseConstants(game::Game &game, const json &jsonFile);
     bool validateGameConfigJson(const json &jsonConfigFile);
 };
 
