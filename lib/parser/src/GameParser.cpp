@@ -52,23 +52,23 @@ void GameParser::parseGame(game::Game &game)
 bool GameParser::validateGameConfigJson(const json &jsonConfigFile)
 {
     std::vector<std::string> validKeyStrings = {
-         CONFIGURATION_JSON,
-         NAME_JSON,
-         PLAYER_COUNT_JSON,
-         MAX_JSON,
-         MIN_JSON,
-         AUDIENCE_JSON,
-         SETUP_JSON,
-         CONSTANTS_JSON,
-         VARIABLES_JSON,
-         PERAUDIENCE_JSON,
-         PERPLAYER_JSON
+            CONFIGURATION_JSON,
+            NAME_JSON,
+            PLAYER_COUNT_JSON,
+            MAX_JSON,
+            MIN_JSON,
+            AUDIENCE_JSON,
+            SETUP_JSON,
+            CONSTANTS_JSON,
+            VARIABLES_JSON,
+            PER_AUDIENCE_JSON,
+            PER_PLAYER_JSON
     };
 
     // For now the validation will just be a simple check to see if the keys exist.
     auto found = std::all_of(jsonConfigFile.items().begin(), jsonConfigFile.items().end(), [validKeyStrings](const auto& element){
         //check if key exists in our KeyMap
-        std::string key = element.key();
+        const std::string& key = element.key();
         return validKeyStrings.end() != std::find_if(validKeyStrings.begin(), validKeyStrings.end(), [key](auto& item)
         {
             return item == key;
