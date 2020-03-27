@@ -47,6 +47,14 @@ bool Room::addUser(UserId user, const std::string& passEntered) {
 	return false;
 }
 
+void Room::setHost(UserId hostId) {
+	hostUserId = hostId;
+}
+
+UserId Room::getHostId() const {
+	return hostUserId;
+}
+
 /* Adds user to userList if there is an open spot */
 bool Room::addUser(UserId user) {
 	return addUser(user, "");

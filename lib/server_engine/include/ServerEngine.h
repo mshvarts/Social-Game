@@ -44,6 +44,7 @@ public:
 	 * network code? */
 
 	void sendMessage(UserId toUserId, const std::string& text);
+	void sendRoomMessage(Room* room, const std::string& text);
 	void sendMessageToAll(const std::string& text);
 
 private:

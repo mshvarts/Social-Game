@@ -7,7 +7,7 @@
 ServerEngine::ServerEngine() = default;
 
 void ServerEngine::processMessage(const EngineMessage& message) {
-	MessageParser::parseMessage(message, this);
+	parseMessage(message, this);
 }
 
 std::vector<EngineMessage> ServerEngine::getMessages() {
@@ -21,9 +21,18 @@ std::vector<EngineMessage> ServerEngine::getMessages() {
 void ServerEngine::logIn(UserId userId) {
 	User newUser{userId, std::to_string(userId)};
 	users.emplace(userId, std::move(newUser));
+	this->sendMessageToAll(std::to_string(userId) + " has joined the server.");
 }
 
 void ServerEngine::logOut(UserId userId) {
+	auto user = this->findUserById(userId);
+
+	// remove user if hes inside a room
+	if (user->getCurrentRoom()) {
+		leaveRoom(this, EngineMessage{ userId, "" });
+	}
+
+	this->sendMessageToAll(user->getName() + " has left the server.");
 	users.erase(userId);
 }
 
@@ -75,4 +84,10 @@ void ServerEngine::sendMessageToAll(const std::string& message) {
 void ServerEngine::sendMessage(UserId toUserId, const std::string& message) { 
 	auto chatMessage = EngineMessage{ toUserId, message };
 	outgoing.push_back(chatMessage);
+}
+
+void ServerEngine::sendRoomMessage(Room* room, const std::string& message) {
+	for (auto userId : room->getUserList()) {
+		sendMessage(userId, message);
+	}
 }
