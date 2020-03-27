@@ -97,7 +97,7 @@ void Game::setConstants(Constants gConstants)
 
 void Game::setVariables(Variables gVariables)
 {
-    variables =
+    variables = gVariables;
 }
 
 
