@@ -5,7 +5,8 @@
 #include "GameParser.h"
 #include "Game.h"
 
-std::string ValidJsonString ="{\n"
+std::string ValidJsonString =
+"{\n"
 "  \"configuration\": {\n"
 "    \"name\": \"Rock, Paper, Scissors\",\n"
 "    \"player count\": {\n"
@@ -32,6 +33,9 @@ std::string ValidJsonString ="{\n"
 "        \"beats\": \"Paper\"\n"
 "      }\n"
 "    ]\n"
+"    ,\n"
+"    \"hands\": \"None\",\n"
+"    \"size\":77\n"
 "  },\n"
 "  \"variables\": {\n"
 "    \"winners\": []\n"
@@ -129,8 +133,10 @@ TEST(ParseConstants, ConstantTests)
     parser::GameParser parser(ValidJsonString);
     json jsonFile = json::parse(ValidJsonString);
     parser.parseConstants(testGame, jsonFile);
+    auto constants = testGame.getGameConstants();
+    auto firstConst = constants.list.at(0);
+    ASSERT_EQ(3, constants.list.size());
 
-    ASSERT_EQ(true, true);
 }
 
 TEST(validateGameConfigJson, ConfigurationTest)

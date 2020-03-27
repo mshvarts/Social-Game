@@ -52,17 +52,22 @@ void GameParser::parseConstants(game::Game &game, const json &jsonFile)
     game::Constants constants;
     std::transform(constantsJson.items().begin(), constantsJson.items().end(), std::inserter(constants.list, constants.list.end()),
                    [](const auto& element){
-                       boost::variant<std::string, int> value;
+                       game::Value value;
                        game::Constant currentConstant;
                        if (element.value().is_number())
                        {
                            value = static_cast<int>(element.value());
                        }
-                       else
+                       else if (element.value().is_string())
                        {
                            value = static_cast<std::string>(element.value());
                        }
+                       else if (element.value().is_array())
+                       {
+                         ; //TODO handle arrays and maps
+                       }
                        currentConstant.name = element.key();
+                       currentConstant.value = value;
                        return currentConstant;
                    });
 

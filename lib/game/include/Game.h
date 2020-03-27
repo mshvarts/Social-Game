@@ -32,7 +32,7 @@ struct Configuration {
 // future so i am keeping them separate. Same goes for perPlayer and perAudience
 struct Constant {
     std::string name;
-    std::vector<Map_of_values> values;
+    Value value;
 };
 
 struct Constants {
@@ -41,7 +41,7 @@ struct Constants {
 
 struct Variable {
     std::string name;
-    std::vector<Map_of_values> values;
+    Value value;
 };
 
 struct Variables {
