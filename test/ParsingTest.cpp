@@ -136,6 +136,7 @@ TEST(ParseConstants, ConstantTests)
     auto constants = testGame.getGameConstants();
     auto firstConst = constants.list.at(0);
     ASSERT_EQ(3, constants.list.size());
+    ASSERT_EQ("hands", firstConst.name);
 
 }
 
