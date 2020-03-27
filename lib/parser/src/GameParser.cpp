@@ -42,16 +42,30 @@ void GameParser::parseGameConfiguration(game::Game &game, const json &jsonFile)
 void GameParser::parseConstants(game::Game &game, const json &jsonFile)
 {
     auto constantsJson = jsonFile[CONSTANTS_JSON];
-    game::Constant config;
 
     //struct Constant {
     //    std::string name;
     //    std::vector<Map_of_values> values;
     //};
     // std::map<std::string, boost::variant<std::string, int>>;
+    std::vector<game::Constant> constants;
+    std::transform(constantsJson.items().begin(), constantsJson.items().end(), std::inserter(constants, constants.end()),
+                   [](const auto& element){
+                       boost::variant<std::string, int> value;
+                       game::Constant currentConstant;
+                       if (element.value().is_number())
+                       {
+                           value = static_cast<int>(element.value());
+                       }
+                       else
+                       {
+                           value = static_cast<std::string>(element.value());
+                       }
+                       currentConstant.name = element.key();
+                       return currentConstant;
+                   });
 
-
-
+    game.setConfiguration()
 }
 
 void GameParser::parseVariables(game::Game &game, const json &jsonFile)

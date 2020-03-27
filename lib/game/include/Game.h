@@ -27,6 +27,7 @@ struct Configuration {
     Map_of_values setup;
 };
 
+
 // Constants and variables look the same now but that might change in the
 // future so i am keeping them separate. Same goes for perPlayer and perAudience
 struct Constant {
@@ -34,9 +35,18 @@ struct Constant {
     std::vector<Map_of_values> values;
 };
 
+struct Constants {
+    std::vector<Constant> list
+};
+
 struct Variable {
     std::string name;
     std::vector<Map_of_values> values;
+};
+
+struct Variables {
+    std::vector<Variable> list;
+
 };
 
 struct PerPlayer {
@@ -57,8 +67,8 @@ private:
     bool isBeingPlayed; // this determines if the game is in play or not
 
     Configuration configuration;
-    std::vector<Constant> constants;
-    std::vector<Variable> variables;
+    Constants constants;
+    Variables variables;
     std::vector<PerPlayer> perPlayer;
     std::vector<PerAudience> perAudience;
 
@@ -68,8 +78,8 @@ public:
     // constructors
     Game(){}
     Game(Configuration configuration,
-            std::vector<Constant> constants,
-            std::vector<Variable> variables,
+         Constants constants,
+         Variables variables,
             std::vector<PerPlayer> perPlayer,
             std::vector<PerAudience> perAudience ) :
                 configuration{std::move(configuration)},
@@ -97,9 +107,9 @@ public:
 
     [[nodiscard]] Configuration getConfiguration() const;
 
-    [[nodiscard]] std::vector<Constant> getGameConstants() const;
+    [[nodiscard]] Constants getGameConstants() const;
 
-    [[nodiscard]] std::vector<Variable> getGameVariables() const;
+    [[nodiscard]] Variables getGameVariables() const;
 
     [[nodiscard]] std::vector<PerPlayer> getPerPlayer() const;
 
@@ -113,6 +123,11 @@ public:
     void setIsGameBeingPlayed(bool gIsPlaying) noexcept;
 
     void setConfiguration(Configuration configuration);
+
+    void setConstants(Constants constants);
+
+    void setVariables(Variables variables);
+
 };
 
 }
