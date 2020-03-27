@@ -7,6 +7,8 @@
 
 using UserId = long unsigned int;
 
+const int MAX_NAME_LENGTH = 32;
+
 class User
 {
 private:

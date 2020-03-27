@@ -21,28 +21,28 @@ std::unordered_map<Actions, std::string> commands {
 	{Actions::JOIN_ROOM, "/join"},
 	{Actions::LEAVE_ROOM, "/leave"},
 	{Actions::LIST_ROOMS, "/rooms"},
-	/*{Actions::START_GAME, "/start"},
+	{Actions::START_GAME, "/start"},
 	{Actions::END_GAME, "/end"},
-	{Actions::SET_NICKNAME, "/name"},*/
+	{Actions::SET_NICKNAME, "/name"},
 	{Actions::KICK_PLAYER, "/kick"},
 	{Actions::SHOW_ROOM_INFO, "/info"},
 	{Actions::COMMANDS, "/cmds"}
 };
 
-std::unordered_map<std::string, std::function<void(ServerEngine*, const EngineMessage&)>> MessageParser::commandFunctions {
+std::unordered_map<std::string, std::function<void(ServerEngine*, const EngineMessage&)>> commandFunctions{
 	{commands[Actions::CREATE_ROOM], createRoom },
 	{commands[Actions::JOIN_ROOM], joinRoom },
 	{commands[Actions::LEAVE_ROOM], leaveRoom },
 	{commands[Actions::LIST_ROOMS], listRooms },
-	//{commands[Actions::START_GAME], startGame },
-	//{commands[Actions::END_GAME], endGame },
-	//{commands[Actions::END_GAME], setName },
+	{commands[Actions::START_GAME], startGame },
+	{commands[Actions::END_GAME], endGame },
+	{commands[Actions::SET_NICKNAME], setName },
 	{commands[Actions::KICK_PLAYER], kickPlayer },
 	{commands[Actions::SHOW_ROOM_INFO], showRoomInfo },
 	{commands[Actions::COMMANDS], showCommands }
 };
 
-void MessageParser::parseMessage(const EngineMessage& message, ServerEngine *engine) {
+void parseMessage(const EngineMessage& message, ServerEngine *engine) {
 
 	std::string outputMessage;
 
@@ -50,12 +50,13 @@ void MessageParser::parseMessage(const EngineMessage& message, ServerEngine *eng
 		parseCommand(message, engine);
 	}
 	else {
-		outputMessage = std::to_string(message.userId) + " > " + message.text;
+		auto user = engine->findUserById(message.userId);
+		outputMessage = user->getName() + " > " + message.text;
 	}
 	engine->sendMessageToAll(outputMessage);
 }
 
-void MessageParser::parseCommand(const EngineMessage& message, ServerEngine *engine) {
+void parseCommand(const EngineMessage& message, ServerEngine *engine) {
 	bool validCommand = false;
 	auto userId = message.userId;
 
@@ -71,13 +72,13 @@ void MessageParser::parseCommand(const EngineMessage& message, ServerEngine *eng
 	}
 }
 
-bool MessageParser::isValidCommand(const std::string& commandText, const EngineMessage& message) {
+bool isValidCommand(const std::string& commandText, const EngineMessage& message) {
 	return message.text.find(commandText) == 0 
 		&& (std::isspace(message.text[commandText.length()]) 
 			|| message.text.length() == commandText.length());
 }
 
-void MessageParser::createRoom(ServerEngine *engine, const EngineMessage& message) {
+void createRoom(ServerEngine *engine, const EngineMessage& message) {
 	auto roomName = extractArguments(message.text);
 	auto userId = message.userId;
 
@@ -89,7 +90,7 @@ void MessageParser::createRoom(ServerEngine *engine, const EngineMessage& messag
 		if (!user->getCurrentRoom()) {
 			Room newroom{ roomName };
 			engine->registerRoom(newroom);
-			engine->sendMessage(userId, "You have created room '" + roomName + "'. Type /join [room] to join.");
+			engine->sendMessage(userId, "You have created a room. Type /join " + roomName + " to join.");
 		}
 		else {
 			engine->sendMessage(userId, "You must leave a room before making a new one");
@@ -97,17 +98,16 @@ void MessageParser::createRoom(ServerEngine *engine, const EngineMessage& messag
 	}
 }
 
-void MessageParser::showCommands(ServerEngine *engine, const EngineMessage& message) {
+void showCommands(ServerEngine *engine, const EngineMessage& message) {
 	auto userId = message.userId; 
 	
-	//engine->sendMessage(userId, "Welcome to Fluffernutter's Social Gaming Platform!");
-	engine->sendMessage(userId, "Command List:");
-	for (auto command : commands) {
+	engine->sendMessage(userId, "Command List: ");
+	for(auto command : commands) {
 		engine->sendMessage(userId, command.second);
 	}
 }
 
-void MessageParser::listRooms(ServerEngine *engine, const EngineMessage& message) {
+void listRooms(ServerEngine *engine, const EngineMessage& message) {
 	auto roomName = extractArguments(message.text);
 	auto userId = message.userId;
 
@@ -124,7 +124,7 @@ void MessageParser::listRooms(ServerEngine *engine, const EngineMessage& message
 	}
 }
 
-void MessageParser::kickPlayer(ServerEngine *engine, const EngineMessage& message) {
+void kickPlayer(ServerEngine *engine, const EngineMessage& message) {
 	auto kickPlayer = extractArguments(message.text);
 	auto userId = message.userId;
 
@@ -136,11 +136,13 @@ void MessageParser::kickPlayer(ServerEngine *engine, const EngineMessage& messag
 		auto user = engine->findUserById(userId);
 		auto room = user->getCurrentRoom();
 		if (room) {
-			// TODO: need to check if the user has permission to kick players
 			auto kickUser = engine->findUserById(kickId);
-			if (kickUser) {
+			if (userId != room->getHostId()) {
+				engine->sendMessage(userId, "You are now the host of this room.");
+			}
+			else if (kickUser) {
 				if (room == kickUser->getCurrentRoom()) {
-					engine->sendMessage(userId, "You have kicked player " + kickUser->getName());
+					engine->sendRoomMessage(room, kickUser->getName() + " has been kicked from the room.");
 					room->removeUser(kickId);
 					kickUser->setCurrentRoom(nullptr);
 				}
@@ -158,22 +160,88 @@ void MessageParser::kickPlayer(ServerEngine *engine, const EngineMessage& messag
 	}
 }
 
-void MessageParser::leaveRoom(ServerEngine *engine, const EngineMessage& message) {
+void setName(ServerEngine *engine, const EngineMessage& message) {
 	auto userId = message.userId;
+	auto user = engine->findUserById(userId);
+	auto newName = extractArguments(message.text);
+	auto oldName = user->getName();
 
+	if (newName.empty()) {
+		engine->sendMessage(userId, "Error: Name is missing");
+	}
+	else {
+		if (newName.length() < MAX_NAME_LENGTH) {
+			engine->sendMessageToAll(oldName + " has changed his name from to " + newName);
+			user->setName(newName);
+		}
+		else {
+			engine->sendMessage(userId, "Your name cant be longer than " + std::to_string(MAX_NAME_LENGTH) + "  characters.");
+		}
+	}
+}
+
+void startGame(ServerEngine *engine, const EngineMessage& message) {
+	auto userId = message.userId;
 	auto user = engine->findUserById(userId);
 	auto room = user->getCurrentRoom();
+
 	if (room) {
-		room->removeUser(userId);
-		engine->sendMessage(userId, "You have left room '" + room->getRoomName() + "'");
-		user->setCurrentRoom(nullptr);
+		auto game = room->getGame();
+		if (game) {
+			game->setIsGameBeingPlayed(true);
+			engine->sendRoomMessage(room, user->getName() + " has started the game.");
+		}
 	}
 	else {
 		engine->sendMessage(userId, "You are not in any room");
 	}
 }
 
-void MessageParser::joinRoom(ServerEngine *engine, const EngineMessage& message) {
+void endGame(ServerEngine *engine, const EngineMessage& message) {
+	auto userId = message.userId;
+	auto user = engine->findUserById(userId);
+	auto room = user->getCurrentRoom();
+
+	if (room) {
+		auto game = room->getGame();
+		if (game) {
+			game->setIsGameBeingPlayed(false);
+			engine->sendRoomMessage(room, user->getName() + " has ended the game.");
+		}
+	}
+	else {
+		engine->sendMessage(userId, "You are not in any room");
+	}
+}
+
+void leaveRoom(ServerEngine *engine, const EngineMessage& message) {
+	auto userId = message.userId;
+
+	auto user = engine->findUserById(userId);
+	auto room = user->getCurrentRoom();
+	if (room) {
+		engine->sendRoomMessage(room, user->getName() + " has left the room.");
+		room->removeUser(userId);
+		engine->sendMessage(userId, "You have left room '" + room->getRoomName() + "'");
+		user->setCurrentRoom(nullptr);
+
+		// set new host
+		if (room->getNumOfPlayers() == 0) {
+			room->setHost(INVALID_HOST_ID);
+		}
+		else {
+			auto userList = room->getUserList();
+			auto randomPlayerId = userList[rand() % userList.size()];
+			room->setHost(randomPlayerId);
+			engine->sendMessage(randomPlayerId, "You are now the new host of this room.");
+		}
+	}
+	else {
+		engine->sendMessage(userId, "You are not in any room");
+	}
+}
+
+void joinRoom(ServerEngine *engine, const EngineMessage& message) {
 	auto userId = message.userId;
 	auto roomName = extractArguments(message.text);
 	
@@ -184,7 +252,12 @@ void MessageParser::joinRoom(ServerEngine *engine, const EngineMessage& message)
 	else {
 		auto room = engine->findRoomByName(roomName);
 		if (room) {
+			engine->sendRoomMessage(room, user->getName() + " has joined the room.");
 			engine->sendMessage(userId, "You have joined room '" + room->getRoomName() + "'");
+			if (room->getNumOfPlayers() == 0) {
+				room->setHost(userId);
+				engine->sendMessage(userId, "You are the room host.");
+			}
 			auto user = engine->findUserById(userId);
 			user->setCurrentRoom(room);
 			room->addUser(userId);
@@ -195,7 +268,7 @@ void MessageParser::joinRoom(ServerEngine *engine, const EngineMessage& message)
 	}
 }
 
-void MessageParser::showRoomInfo(ServerEngine *engine, const EngineMessage& message) {
+void showRoomInfo(ServerEngine *engine, const EngineMessage& message) {
 	// Show info about user's current room 
 	auto userId = message.userId;
 	auto user = engine->findUserById(userId);
@@ -205,8 +278,8 @@ void MessageParser::showRoomInfo(ServerEngine *engine, const EngineMessage& mess
 			engine->sendMessage(userId, "Room name: " + room->getRoomName());
 			engine->sendMessage(userId, "# of Players: " + std::to_string(room->getNumOfPlayers()) + "/" + std::to_string(room->getRoomMaxSize()));
 			auto playerList = room->getUserList();
+			engine->sendMessage(userId, "Player List:");
 			if (!playerList.empty()) {
-				engine->sendMessage(userId, "Player List:");
 				for (auto player : playerList) {
 					auto user = engine->findUserById(player);
 					engine->sendMessage(userId, user->getName());
@@ -219,11 +292,11 @@ void MessageParser::showRoomInfo(ServerEngine *engine, const EngineMessage& mess
 	}
 }
 
-bool MessageParser::isCommand(const std::string& commandText) {
-	return commandText.find(COMMAND_DELIMETER) == 0;
+bool isCommand(const std::string& commandText) {
+	return commandText.find("/") == 0; 
 }
 
-std::string MessageParser::extractArguments(const std::string& commandText) {
+std::string extractArguments(const std::string& commandText) {
 	std::string argument;
 	std::string commandTrimmed = commandText;
 
