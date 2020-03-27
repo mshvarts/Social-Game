@@ -137,7 +137,18 @@ TEST(ParseConstants, ConstantTests)
     auto firstConst = constants.list.at(0);
     ASSERT_EQ(3, constants.list.size());
     ASSERT_EQ("hands", firstConst.name);
+}
 
+TEST(ParseVariables, ConstantTests)
+{
+    game::Game testGame;
+    parser::GameParser parser(ValidJsonString);
+    json jsonFile = json::parse(ValidJsonString);
+    parser.parseVariables(testGame, jsonFile);
+    auto variables = testGame.getGameVariables();
+    auto firstVar = variables.list.at(0);
+    ASSERT_EQ(3, variables.list.size());
+    ASSERT_EQ("hands", firstVar.name);
 }
 
 TEST(validateGameConfigJson, ConfigurationTest)
