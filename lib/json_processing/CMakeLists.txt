@@ -17,6 +17,7 @@ target_link_libraries(json_processing
 	PUBLIC
 	user
 	server_engine
+	parser
 	nlohmann_json::nlohmann_json)
 
 set_target_properties(json_processing

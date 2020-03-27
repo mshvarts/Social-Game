@@ -2,6 +2,7 @@
 #include <functional>
 #include <string>
 #include "Room.h"
+#include "GameParser.h"
 
 enum Actions {
 	CREATE_ROOM,
@@ -13,7 +14,8 @@ enum Actions {
 	SET_NICKNAME,
 	KICK_PLAYER, 
 	SHOW_ROOM_INFO,
-	COMMANDS
+	COMMANDS,
+	SETGAME
 };
 
 std::unordered_map<Actions, std::string> commands {
@@ -41,7 +43,7 @@ std::unordered_map<std::string, std::function<void(ServerEngine*, const EngineMe
 	{commands[Actions::KICK_PLAYER], kickPlayer },
 	{commands[Actions::SHOW_ROOM_INFO], showRoomInfo },
 	{commands[Actions::COMMANDS], showCommands },
-	{commands[Actions::SETGAME], setGame }
+	{commands[Actions::SETGAME], setRoomGame }
 };
 
 void parseMessage(const EngineMessage& message, ServerEngine *engine) {
@@ -99,24 +101,32 @@ void createRoom(ServerEngine *engine, const EngineMessage& message) {
 	}
 }
 
-// need to figure this out later
-/*void setGame(ServerEngine *engine, const EngineMessage& message) {
+// TODO: need to test if it actually works 
+void setRoomGame(ServerEngine *engine, const EngineMessage& message) {
 	auto gameConfig = extractArguments(message.text);
 	auto userId = message.userId;
 	auto user = engine->findUserById(userId);
 	auto room = user->getCurrentRoom();
 	 
-	if (room && room->getHostId() != userId) {
+	if (!room || room->getHostId() != userId) {
 		engine->sendMessage(userId, "Error: You are not the host of this room.");
 	}
 	else if (gameConfig.empty()) {
-		engine->sendMessage(userId, "Error: Game config name is missing.");
+		engine->sendMessage(userId, "Error: Game config is missing.");
 	}
 	else {
-		Game newGame{};
-		room->setGame(newGame);
+		game::Game newGame;
+		parser::GameParser parser(gameConfig);
+		auto validConfig = parser.validateGameConfigJson(gameConfig);
+		if (validConfig) {
+			parser.parseGame(newGame);
+			room->setGame(&newGame);
+		}
+		else {
+			engine->sendMessage(userId, "Error: Game config is invalid or not a JSON");
+		}
 	}
-}*/
+}
 
 void showCommands(ServerEngine *engine, const EngineMessage& message) {
 	auto userId = message.userId; 
