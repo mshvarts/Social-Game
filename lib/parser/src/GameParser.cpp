@@ -48,8 +48,9 @@ void GameParser::parseConstants(game::Game &game, const json &jsonFile)
     //    std::vector<Map_of_values> values;
     //};
     // std::map<std::string, boost::variant<std::string, int>>;
-    std::vector<game::Constant> constants;
-    std::transform(constantsJson.items().begin(), constantsJson.items().end(), std::inserter(constants, constants.end()),
+
+    game::Constants constants;
+    std::transform(constantsJson.items().begin(), constantsJson.items().end(), std::inserter(constants.list, constants.list.end()),
                    [](const auto& element){
                        boost::variant<std::string, int> value;
                        game::Constant currentConstant;
@@ -65,7 +66,7 @@ void GameParser::parseConstants(game::Game &game, const json &jsonFile)
                        return currentConstant;
                    });
 
-    game.setConfiguration()
+    game.setConstants(constants);
 }
 
 void GameParser::parseVariables(game::Game &game, const json &jsonFile)

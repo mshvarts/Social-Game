@@ -36,7 +36,7 @@ struct Constant {
 };
 
 struct Constants {
-    std::vector<Constant> list
+    std::vector<Constant> list;
 };
 
 struct Variable {
