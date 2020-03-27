@@ -85,3 +85,13 @@ TEST(ParseSetupTest, ConfigurationTest)
     ASSERT_EQ(true, expSetupKeysIsFound);
     ASSERT_EQ(10, boost::get<int>(roundsValue));
 }
+
+TEST(validateGameConfigJson, ConfigurationTest)
+{
+    game::Game testGame;
+    parser::GameParser parser(ValidJsonString);
+    json jsonFile = json::parse(ValidJsonString);
+    auto actualBool = parser.validateGameConfigJson(jsonFile);
+
+    ASSERT_EQ(true, actualBool);
+}
