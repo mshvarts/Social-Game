@@ -23,5 +23,6 @@ void setName(ServerEngine *engine, const EngineMessage& message);
 void kickPlayer(ServerEngine *engine, const EngineMessage& message);
 void showCommands(ServerEngine *engine, const EngineMessage& message);
 bool isValidCommand(const std::string& commandText, const EngineMessage& message);
+bool setGame(const std::string& commandText, const EngineMessage& message);
 
 #endif //SOCIALGAMING_MESSAGEPARSER_H
