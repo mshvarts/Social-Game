@@ -41,6 +41,16 @@ void GameParser::parseGameConfiguration(game::Game &game, const json &jsonFile)
 
 void GameParser::parseConstants(game::Game &game, const json &jsonFile)
 {
+    auto constantsJson = jsonFile[CONSTANTS_JSON];
+    game::Constant config;
+
+    //struct Constant {
+    //    std::string name;
+    //    std::vector<Map_of_values> values;
+    //};
+    // std::map<std::string, boost::variant<std::string, int>>;
+
+
 
 }
 
@@ -59,6 +69,7 @@ void GameParser::parseGame(game::Game &game)
     parseGameConfiguration(game, jsonFile);
 }
 
+// TODO: might have to look into making this function static or not inside this class.
 bool GameParser::validateGameConfigJson(const json &jsonConfigFile)
 {
     std::vector<std::string> validKeyStrings = {

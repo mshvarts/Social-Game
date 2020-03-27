@@ -41,6 +41,43 @@ std::string ValidJsonString ="{\n"
 "  },\n"
 "  \"per-audience\": {}}";
 
+std::string InvalidJsonString =
+"{\n"
+ "  \"confasdfasfiguration\": {\n"
+ "    \"name\": \"Rock, Paper, Scissors\",\n"
+ "    \"player count\": {\n"
+ "      \"min\": 2,\n"
+ "      \"max\": 4\n"
+ "    },\n"
+ "    \"audience\": false,\n"
+ "    \"setup\": {\n"
+ "      \"Rounds\": 10\n"
+ "    }\n"
+ "  },\n"
+ "  \"constaasdfnts\": {\n"
+ "    \"weapons\": [\n"
+ "      {\n"
+ "        \"name\": \"Rock\",\n"
+ "        \"beats\": \"Scissors\"\n"
+ "      },\n"
+ "      {\n"
+ "        \"name\": \"Paper\",\n"
+ "        \"beats\": \"Rock\"\n"
+ "      },\n"
+ "      {\n"
+ "        \"name\": \"Scissors\",\n"
+ "        \"beats\": \"Paper\"\n"
+ "      }\n"
+ "    ]\n"
+ "  },\n"
+ "  \"variabasdfasdfles\": {\n"
+ "    \"winners\": []\n"
+ "  },\n"
+ "  \"per-player\": {\n"
+ "    \"wins\": 0\n"
+ "  },\n"
+ "  \"per-audience\": {}}";
+
 
 TEST(ParseNameTest, ConfigurationTest)
 {
@@ -86,12 +123,28 @@ TEST(ParseSetupTest, ConfigurationTest)
     ASSERT_EQ(10, boost::get<int>(roundsValue));
 }
 
+TEST(ParseConstants, ConstantTests)
+{
+    game::Game testGame;
+    parser::GameParser parser(ValidJsonString);
+    json jsonFile = json::parse(ValidJsonString);
+    parser.parseConstants(testGame, jsonFile);
+
+    ASSERT_EQ(true, true);
+}
+
 TEST(validateGameConfigJson, ConfigurationTest)
 {
     game::Game testGame;
     parser::GameParser parser(ValidJsonString);
     json jsonFile = json::parse(ValidJsonString);
-    auto actualBool = parser.validateGameConfigJson(jsonFile);
+    auto validBool = parser.validateGameConfigJson(jsonFile);
 
-    ASSERT_EQ(true, actualBool);
+    parser::GameParser parserInvalid(InvalidJsonString);
+    jsonFile = json::parse(InvalidJsonString);
+    auto invalidBool = parser.validateGameConfigJson(jsonFile);
+
+    ASSERT_EQ(true, validBool);
+    ASSERT_EQ(false, invalidBool);
+
 }
