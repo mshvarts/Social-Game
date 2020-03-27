@@ -19,6 +19,10 @@ namespace parser
 #define MIN_JSON "min"
 #define AUDIENCE_JSON "audience"
 #define SETUP_JSON "setup"
+#define CONSTANTS_JSON "constants"
+#define VARIABLES_JSON "variables"
+#define PER_PLAYER_JSON "per-player"
+#define PER_AUDIENCE_JSON "per-audience"
 
 class GameParser
 {
@@ -29,7 +33,11 @@ public:
     explicit GameParser(std::string jsonString) : jsonString(std::move(jsonString)) {}
     void parseGame(game::Game &game);
     void parseGameConfiguration(game::Game &game, const json &jsonFile);
+    //TODO: make parseVariables and parseConstants use templates for cleaner code.
+    void parseVariables(game::Game &game, const json &jsonFile);
+    void parseConstants(game::Game &game, const json &jsonFile);
     bool validateGameConfigJson(const json &jsonConfigFile);
+
 };
 
 } // namespace parser

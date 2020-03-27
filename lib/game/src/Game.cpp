@@ -49,12 +49,12 @@ Configuration Game::getConfiguration() const
     return configuration;
 }
 
-std::vector<Constant> Game::getGameConstants() const
+Constants Game::getGameConstants() const
 {
-    return std::vector<Constant>();
+    return constants;
 }
 
-std::vector<Variable> Game::getGameVariables() const
+Variables Game::getGameVariables() const
 {
     return variables;
 }
@@ -89,5 +89,17 @@ void Game::setIsGameBeingPlayed(bool gIsPlaying) noexcept
 void Game::setConfiguration(Configuration gConfiguration) {
     configuration = gConfiguration;
 }
+
+void Game::setConstants(Constants gConstants)
+{
+    constants = gConstants;
+}
+
+void Game::setVariables(Variables gVariables)
+{
+    variables = gVariables;
+}
+
+
 
 } // namespace game
