@@ -49,15 +49,17 @@ std::unordered_map<std::string, std::function<void(ServerEngine*, const EngineMe
 void parseMessage(const EngineMessage& message, ServerEngine *engine) {
 
 	std::string outputMessage;
-
+    auto user = engine->findUserById(message.userId);
+    auto room = user->getCurrentRoom();
 	if (isCommand(message.text)) {
 		parseCommand(message, engine);
 	}
+
 	else {
-		auto user = engine->findUserById(message.userId);
 		outputMessage = user->getName() + " > " + message.text;
 	}
-	engine->sendMessageToAll(outputMessage);
+	engine->sendRoomMessage(room,outputMessage);
+    //engine->sendMessageToAll(outputMessage);
 }
 
 void parseCommand(const EngineMessage& message, ServerEngine *engine) {
@@ -90,13 +92,14 @@ void createRoom(ServerEngine *engine, const EngineMessage& message) {
 	if (roomName.empty()) {
 		engine->sendMessage(userId, "Error: Room name is missing");
 	}
-	else if (!user->getCurrentRoom()) {
-		Room newroom{ roomName };
-		engine->registerRoom(newroom);
+	else if (user->getCurrentRoom()->getRoomId()==0) {
+		Room newRoom{ roomName };
+		engine->registerRoom(newRoom,userId);
 		engine->sendMessage(userId, "You have created a room. Type /join " + roomName + " to join.");
-		newroom.setHost(userId);
+
 	}
 	else {
+	    std::cout<<"You're in room: "<<user->getCurrentRoom()->getRoomId()<<"\n";
 		engine->sendMessage(userId, "You must leave a room before making a new one");
 	}
 }
@@ -129,8 +132,7 @@ void setRoomGame(ServerEngine *engine, const EngineMessage& message) {
 }
 
 void showCommands(ServerEngine *engine, const EngineMessage& message) {
-	auto userId = message.userId; 
-	
+	auto userId = message.userId;
 	engine->sendMessage(userId, "Command List: ");
 	for(auto command : commands) {
 		engine->sendMessage(userId, command.second);
@@ -163,7 +165,7 @@ void kickPlayer(ServerEngine *engine, const EngineMessage& message) {
 	if (kickPlayer.empty())  {
 		engine->sendMessage(userId, "You must specify a player id");
 	}
-	else if (room) {
+	else if (room->getRoomId()!=0) {
 		auto kickId = static_cast<UserId>(std::stoul(kickPlayer, nullptr, 0));
 		auto kickUser = engine->findUserById(kickId);
 		if (userId != room->getHostId()) {
@@ -173,7 +175,7 @@ void kickPlayer(ServerEngine *engine, const EngineMessage& message) {
 			if (room == kickUser->getCurrentRoom()) {
 				engine->sendRoomMessage(room, kickUser->getName() + " has been kicked from the room.");
 				room->removeUser(kickId);
-				kickUser->setCurrentRoom(nullptr);
+				kickUser->setCurrentRoom(engine->getMainRoom());
 			}
 			else {
 				engine->sendMessage(userId, "You cannot kick a player in another room");
@@ -211,7 +213,7 @@ void startGame(ServerEngine *engine, const EngineMessage& message) {
 	auto user = engine->findUserById(userId);
 	auto room = user->getCurrentRoom();
 
-	if (room) {
+	if (room->getRoomId()!=0) {
 		auto game = room->getGame();
 		if (game) {
 			game->setIsGameBeingPlayed(true);
@@ -228,7 +230,7 @@ void endGame(ServerEngine *engine, const EngineMessage& message) {
 	auto user = engine->findUserById(userId);
 	auto room = user->getCurrentRoom();
 
-	if (room) {
+	if (room->getRoomId()!=0) {
 		auto game = room->getGame();
 		if (game) {
 			game->setIsGameBeingPlayed(false);
@@ -245,12 +247,12 @@ void leaveRoom(ServerEngine *engine, const EngineMessage& message) {
 
 	auto user = engine->findUserById(userId);
 	auto room = user->getCurrentRoom();
-	if (room) {
-		engine->sendRoomMessage(room, user->getName() + " has left the room.");
+	if (room->getRoomId()!=0) {
 		room->removeUser(userId);
+        user->setCurrentRoom(engine->getMainRoom());
+        engine->getMainRoom()->addUser(userId);
+        engine->sendRoomMessage(room, user->getName() + " has left the room.");
 		engine->sendMessage(userId, "You have left room '" + room->getRoomName() + "'");
-		user->setCurrentRoom(nullptr);
-
 	}
 	else {
 		engine->sendMessage(userId, "You are not in any room");
@@ -261,18 +263,20 @@ void joinRoom(ServerEngine *engine, const EngineMessage& message) {
 	auto userId = message.userId;
 	auto roomName = extractArguments(message.text);
 	auto room = engine->findRoomByName(roomName);
-
 	auto user = engine->findUserById(userId);
-	if (user->getCurrentRoom()) {
-		engine->sendMessage(userId, "You must leave your room before joining another one");
-	}
-	else if (room) {
+	auto currentRoom=user->getCurrentRoom();
+
+    if (room && currentRoom->getRoomId()==0) {
+        currentRoom->removeUser(userId);
+        auto user = engine->findUserById(userId);
+        user->setCurrentRoom(room);
+        room->addUser(userId);
 		engine->sendRoomMessage(room, user->getName() + " has joined the room.");
-		engine->sendMessage(userId, "You have joined room '" + room->getRoomName() + "'");
-		auto user = engine->findUserById(userId);
-		user->setCurrentRoom(room);
-		room->addUser(userId);
+		//engine->sendMessage(userId, "You have joined room '" + room->getRoomName() + "'");
 	}
+	else if (currentRoom->getRoomId()!=0) {
+        engine->sendMessage(userId, "You must leave your room before joining another one");
+        }
 	else {
 		engine->sendMessage(userId, "This room does not exist");
 	}
@@ -284,15 +288,20 @@ void showRoomInfo(ServerEngine *engine, const EngineMessage& message) {
 	auto user = engine->findUserById(userId);
 	if (user) {
 		auto room = user->getCurrentRoom();
-		if (room) {
+		if (room->getRoomId()!=0) {
 			engine->sendMessage(userId, "Room name: " + room->getRoomName());
 			engine->sendMessage(userId, "Number of players: " + std::to_string(room->getNumOfPlayers()) + "/" + std::to_string(room->getRoomMaxSize()));
+            std::cout<<"Debug Text 1:"<<"\n";
 			auto playerList = room->getUserList();
-			auto roomId = room->getHostId();
-			engine->sendMessage(userId, "Room host: " + engine->findUserById(roomId)->getName());
+            std::cout<<"Debug Text 2:"<<"\n";
+			engine->sendMessage(userId, "Room host: " + engine->findUserById(room->getHostId())->getName());
+            std::cout<<"Debug Text 2.5:"<<"\n";
 			engine->sendMessage(userId, "Player list: ");
+            std::cout<<"Debug Text 3:"<<"\n";
 			if (!playerList.empty()) {
+                std::cout<<"Debug Text 4:"<<"\n";
 				for (auto player : playerList) {
+                    std::cout<<"Debug Text 5:"<<"\n";
 					auto user = engine->findUserById(player);
 					engine->sendMessage(userId, user->getName());
 				}

@@ -33,6 +33,15 @@ void Room::setMaxSize(int maxNumOfPlayers) {
 size_t Room::getRoomMaxSize() const {
 	return maxSize;
 }
+void Room::setRoomId(RoomId newId)
+{
+    room_Id= newId;
+}
+
+RoomId Room::getRoomId() const
+{
+    return room_Id;
+}
 
 /* Adds user to userList if there is room and the password is correct */
 /* Returns false if password was incorrect */
@@ -48,10 +57,13 @@ bool Room::addUser(UserId user, const std::string& passEntered) {
 }
 
 void Room::setHost(UserId hostId) {
+
 	hostUserId = hostId;
+
 }
 
-UserId Room::getHostId() const {
+UserId Room::getHostId() {
+
 	return hostUserId;
 }
 

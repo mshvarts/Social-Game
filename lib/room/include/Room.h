@@ -6,6 +6,7 @@
 #include "Game.h"
 
 using UserId = long unsigned int;
+using RoomId = long unsigned int;
 
 const int INVALID_HOST_ID = -1;
 const size_t DEFAULT_MAX_ROOM_SIZE = 6;
@@ -20,7 +21,8 @@ private:
 	std::string password;
 	std::vector<UserId> userList;
 	game::Game* currentGame;
-	bool hostUserId;
+	UserId hostUserId;
+    RoomId room_Id;
 
 public:
 	explicit Room(std::string roomName) :
@@ -36,7 +38,7 @@ public:
 	[[nodiscard]] std::vector<UserId> getUserList() const;
 	[[nodiscard]] size_t getRoomMaxSize() const;
 	[[nodiscard]] game::Game* getGame() const;
-	[[nodiscard]] UserId getHostId() const;
+	[[nodiscard]] UserId getHostId();
 
 	bool setRoomName(std::string name);
 	void setPassword(std::string roomPassword);
@@ -47,6 +49,8 @@ public:
 	void removePassword();
 	void setGame(game::Game* game);
 	void setHost(UserId user);
+	void setRoomId(RoomId newId);
+	RoomId getRoomId() const;
 };
 
 #endif //SOCIALGAMING_ROOM_H

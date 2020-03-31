@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "User.h"
+using RoomId = long unsigned int;
 
 struct EngineMessage {
 	UserId userId;
@@ -21,11 +22,23 @@ using RoomMap = std::unordered_map<std::string, Room>;
 
 class ServerEngine {
 public:
-	explicit ServerEngine();
+	// Upon initialization, a new user called admin is created. Then a new room called "Main" is created with Admin as the host It'll have roomID 0.
+	// All new users are immediately placed into the room with ID 0.
+	// Creating new rooms is only allowed in room with ID 0
+	ServerEngine() {
+		UserId adminId{000000};
+		User Admin{adminId, "Admin"};
+		Room mainRoom{"Main"};
+		mainRoom.setMaxSize(999);
+		registerRoom(mainRoom, adminId);
+		main=findRoomByName("Main");
+	}
+	RoomId roomCounter=0;
+	Room* main;
 
 	void logIn(UserId userId);
 	void logOut(UserId userId);
-	void registerRoom(Room room);
+	void registerRoom(Room room, UserId userId);
 	void unregisterRoom(Room room);
 	std::vector<Room> getRooms();
 
@@ -46,6 +59,8 @@ public:
 	void sendMessage(UserId toUserId, const std::string& text);
 	void sendRoomMessage(Room* room, const std::string& text);
 	void sendMessageToAll(const std::string& text);
+
+	Room* getMainRoom();
 
 private:
 	UserMap users;

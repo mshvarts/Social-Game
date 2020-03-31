@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-ServerEngine::ServerEngine() = default;
+
 
 void ServerEngine::processMessage(const EngineMessage& message) {
 	parseMessage(message, this);
@@ -20,6 +20,8 @@ std::vector<EngineMessage> ServerEngine::getMessages() {
  */
 void ServerEngine::logIn(UserId userId) {
 	User newUser{userId, std::to_string(userId)};
+    newUser.setCurrentRoom(getMainRoom());
+    getMainRoom()->addUser(userId);
 	users.emplace(userId, std::move(newUser));
 	this->sendMessageToAll(std::to_string(userId) + " has joined the server.");
 }
@@ -36,8 +38,15 @@ void ServerEngine::logOut(UserId userId) {
 	users.erase(userId);
 }
 
-void ServerEngine::registerRoom(Room room) {
+void ServerEngine::registerRoom(Room room, UserId userId) {
+    room.setHost(userId);
+
+    room.setRoomId(roomCounter);
 	rooms.emplace(room.getRoomName(), room);
+
+	roomCounter++;
+
+
 }
 
 void ServerEngine::unregisterRoom(Room room) {
@@ -45,9 +54,11 @@ void ServerEngine::unregisterRoom(Room room) {
 }
 
 User* ServerEngine::findUserById(UserId userId) {
+
 	auto user = users.find(userId);
 
 	if (user == users.end()) {
+
 		return nullptr; // not found
 	}
 	else {
@@ -85,9 +96,17 @@ void ServerEngine::sendMessage(UserId toUserId, const std::string& message) {
 	auto chatMessage = EngineMessage{ toUserId, message };
 	outgoing.push_back(chatMessage);
 }
-
+Room* ServerEngine::getMainRoom()
+{
+    return main;
+}
 void ServerEngine::sendRoomMessage(Room* room, const std::string& message) {
-	for (auto userId : room->getUserList()) {
-		sendMessage(userId, message);
-	}
+
+    for(auto const &userId : room->getUserList()) {
+
+        auto chatMessage = EngineMessage{ userId, message };
+        outgoing.push_back(chatMessage);
+    }
+
+
 }
