@@ -32,10 +32,11 @@ public:
 		mainRoom.setMaxSize(999);
 		registerRoom(mainRoom, adminId);
 		main=findRoomByName("Main");
+
 	}
 	RoomId roomCounter=0;
 	Room* main;
-
+    const RoomId mainRoomId=0;    //in theory the main room's Id should always be zero, but I'd prefer to implement this as findIdByName("Main") once that function gets implemented
 	void logIn(UserId userId);
 	void logOut(UserId userId);
 	void registerRoom(Room room, UserId userId);
