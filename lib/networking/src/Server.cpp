@@ -376,6 +376,8 @@ Server::update() {
 
 std::deque<ConnectionMessage>
 Server::receive() {
+
+
   std::deque<ConnectionMessage> oldIncoming;
   std::swap(oldIncoming, impl->incoming);
   return oldIncoming;

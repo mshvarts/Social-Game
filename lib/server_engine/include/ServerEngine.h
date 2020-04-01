@@ -60,14 +60,17 @@ public:
 	void sendMessage(UserId toUserId, const std::string& text);
 	void sendRoomMessage(Room* room, const std::string& text);
 	void sendMessageToAll(const std::string& text);
-
+    std::string generateRandomName();
 	Room* getMainRoom();
 
 private:
 	UserMap users;
 	RoomMap rooms;
-
 	std::vector<EngineMessage> outgoing;
+
+    std::vector<std::string> nicknameFirstHalf{"Amazing","Ambitious","Brave","Energetic","Flaming","Free","Green","Happy","Heroic","Large","Sneaky","Swift","The","Tiny"};
+    std::vector<std::string> nicknameSecondHalf{"Rat","Ox","Tiger","Rabbit","Dragon","Snake","Horse","Goat","Monkey","Rooster","Dog","Pig"};
 };
+
 
 #endif //SOCIALGAMING_SERVERENGINE_H

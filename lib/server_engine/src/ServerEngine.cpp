@@ -3,15 +3,15 @@
 #include "MessageParser.h"
 
 #include <algorithm>
-
+#include <time.h>
 
 
 void ServerEngine::processMessage(const EngineMessage& message) {
 	parseMessage(message, this);
 }
 
-std::vector<EngineMessage> ServerEngine::getMessages() {
-	std::vector<EngineMessage> oldOutgoing;
+std::vector<EngineMessage> ServerEngine::getMessages() {        //find where this function gets used It doesn't get called when the serverengine calls messages, but does get called when
+	std::vector<EngineMessage> oldOutgoing;                     //MessageParse does.
 	std::swap(oldOutgoing, outgoing);
 	return oldOutgoing;
 }
@@ -21,9 +21,12 @@ std::vector<EngineMessage> ServerEngine::getMessages() {
 void ServerEngine::logIn(UserId userId) {
 	User newUser{userId, std::to_string(userId)};
     newUser.setCurrentRoom(getMainRoom());
+    std::string newName=generateRandomName();
+    newUser.setName(newName);
     getMainRoom()->addUser(userId);
 	users.emplace(userId, std::move(newUser));
-	this->sendMessageToAll(std::to_string(userId) + " has joined the server.");
+    this -> sendRoomMessage(main,newName + " has joined the server.");
+
 }
 
 void ServerEngine::logOut(UserId userId) {
@@ -33,8 +36,11 @@ void ServerEngine::logOut(UserId userId) {
 	if (user->getCurrentRoom()) {
 		leaveRoom(this, EngineMessage{ userId, "" });
 	}
-
-	this->sendMessageToAll(user->getName() + " has left the server.");
+    if (user->getCurrentRoom()==main)   //should theoretically be always.
+    {
+        main->removeUser(userId);
+    }
+	this->sendRoomMessage(main,user->getName() + " has left the server.");
 	users.erase(userId);
 }
 
@@ -100,10 +106,15 @@ Room* ServerEngine::getMainRoom()
 {
     return main;
 }
+std::string ServerEngine::generateRandomName()
+{
+    srand((unsigned)time(NULL) );
+    return nicknameFirstHalf[rand() % nicknameFirstHalf.size()] + nicknameSecondHalf[rand() % nicknameSecondHalf.size()];
+
+}
 void ServerEngine::sendRoomMessage(Room* room, const std::string& message) {
 
     for(auto const &userId : room->getUserList()) {
-
         auto chatMessage = EngineMessage{ userId, message };
         outgoing.push_back(chatMessage);
     }

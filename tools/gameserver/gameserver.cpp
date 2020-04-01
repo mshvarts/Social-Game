@@ -58,10 +58,13 @@ struct MessageResult
 MessageResult
 processMessages(Server &server, const std::deque<ConnectionMessage> &incoming)
 {
+
   std::vector<ConnectionMessage> result;
   bool quit = false;
+
   for (auto &message : incoming)
   {
+
     if (message.text == "quit")
     {
       server.disconnect(message.connection);
@@ -77,9 +80,7 @@ processMessages(Server &server, const std::deque<ConnectionMessage> &incoming)
     	EngineMessage engineMessage{messageUserId, message.text};
 
     	serverEngine->processMessage(engineMessage);
-
     	auto engineResponse = serverEngine->getMessages();
-
     	for(auto &responseMessage : engineResponse) {
     		auto messageConnection = connectionMapper->getConnectionForUserId(responseMessage.userId);
     		ConnectionMessage outgoing{messageConnection, responseMessage.text};
@@ -148,7 +149,9 @@ int main(int argc, char *argv[])
     }
 
     auto incoming = server.receive();
+
     auto [log, shouldQuit] = processMessages(server, incoming);
+
     auto outgoing = buildOutgoing(log);
     server.send(outgoing);
 
