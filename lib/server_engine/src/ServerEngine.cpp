@@ -20,10 +20,10 @@ std::vector<EngineMessage> ServerEngine::getMessages() {        //find where thi
  */
 void ServerEngine::logIn(UserId userId) {
 	User newUser{userId, std::to_string(userId)};
-    newUser.setCurrentRoom(getMainRoom());
+    newUser.setCurrentRoom(main);
     std::string newName=generateRandomName();
     newUser.setName(newName);
-    getMainRoom()->addUser(userId);
+    main->addUser(userId);
 	users.emplace(userId, std::move(newUser));
     this -> sendRoomMessage(main,newName + " has joined the server.");
 
@@ -102,10 +102,7 @@ void ServerEngine::sendMessage(UserId toUserId, const std::string& message) {
 	auto chatMessage = EngineMessage{ toUserId, message };
 	outgoing.push_back(chatMessage);
 }
-Room* ServerEngine::getMainRoom()
-{
-    return main;
-}
+
 std::string ServerEngine::generateRandomName()
 {
     srand((unsigned)time(NULL) );
