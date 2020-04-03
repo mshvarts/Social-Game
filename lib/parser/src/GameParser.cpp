@@ -1,5 +1,4 @@
 #include "GameParser.h"
-#include <iostream>
 namespace parser
 {
 
