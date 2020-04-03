@@ -20,41 +20,13 @@ void createMapFromJson(game::Map_of_values& map, const json &jsonObj)
                    });
 }
 
-void GameParser::parseGameConfiguration(game::Game &game, const json &jsonFile)
+template <typename T>
+void createValueTypeFromJson(T& valueType, const json& jsonObj)
 {
-    auto configurationJson = jsonFile[CONFIGURATION_JSON];
-    game::Configuration config;
-
-    config.name = configurationJson[NAME_JSON];
-    config.playerCount.max = configurationJson[PLAYER_COUNT_JSON][MAX_JSON];
-    config.playerCount.min = configurationJson[PLAYER_COUNT_JSON][MIN_JSON];
-    config.audience = configurationJson[AUDIENCE_JSON];
-
-    //"setup" names a map of settings that can or must be configured by the owner of the game upon game creation. This can include such things as the numbers specifying the number of rounds to play. If the value for a setting is an integer, boolean, or string literal then that value constitutes the default value. These need not be changed by the owner upon creation but can be. Otherwise, the value must be a map of the form:
-    // {
-    //   "kind": <<data kind>>,
-    //   "prompt": <<Description of what data the owner should provide>>
-    // }
-
-    game::Map_of_values setup;
-    auto setupJson = configurationJson[SETUP_JSON];
-    createMapFromJson(setup, setupJson);
-    config.setup = std::move(setup);
-    game.setConfiguration(config);
-}
-
-
-
-
-void GameParser::parseConstants(game::Game &game, const json &jsonFile)
-{
-    auto constantsJson = jsonFile[CONSTANTS_JSON];
-
-    game::Constants constants;
-    std::transform(constantsJson.items().begin(), constantsJson.items().end(), std::inserter(constants.list, constants.list.end()),
+    std::transform(jsonObj.items().begin(), jsonObj.items().end(), std::inserter(valueType.list, valueType.list.end()),
                    [](const auto& element){
                        game::Value value;
-                       game::Constant currentConstant;
+                       game::GameValue currentGameValue;
                        if (element.value().is_number())
                        {
                            value = static_cast<int>(element.value());
@@ -89,62 +61,65 @@ void GameParser::parseConstants(game::Game &game, const json &jsonFile)
 
                            value = currentList;
                        }
-                       currentConstant.name = element.key();
-                       currentConstant.value = value;
-                       return currentConstant;
+                       currentGameValue.name = element.key();
+                       currentGameValue.value = value;
+                       return currentGameValue;
                    });
+}
 
+
+void GameParser::parseGameConfiguration(game::Game &game, const json &jsonFile)
+{
+    auto configurationJson = jsonFile[CONFIGURATION_JSON];
+    game::Configuration config;
+
+    config.name = configurationJson[NAME_JSON];
+    config.playerCount.max = configurationJson[PLAYER_COUNT_JSON][MAX_JSON];
+    config.playerCount.min = configurationJson[PLAYER_COUNT_JSON][MIN_JSON];
+    config.audience = configurationJson[AUDIENCE_JSON];
+
+    //"setup" names a map of settings that can or must be configured by the owner of the game upon game creation. This can include such things as the numbers specifying the number of rounds to play. If the value for a setting is an integer, boolean, or string literal then that value constitutes the default value. These need not be changed by the owner upon creation but can be. Otherwise, the value must be a map of the form:
+    // {
+    //   "kind": <<data kind>>,
+    //   "prompt": <<Description of what data the owner should provide>>
+    // }
+
+    game::Map_of_values setup;
+    auto setupJson = configurationJson[SETUP_JSON];
+    createMapFromJson(setup, setupJson);
+    config.setup = std::move(setup);
+    game.setConfiguration(config);
+}
+
+void GameParser::parseConstants(game::Game &game, const json &jsonFile){
+    game::Constants constants;
+
+    auto constantsJson = jsonFile[CONSTANTS_JSON];
+    createValueTypeFromJson(constants, constantsJson);
     game.setConstants(constants);
 }
 
-void GameParser::parseVariables(game::Game &game, const json &jsonFile)
-{
-    auto variablesJson = jsonFile[VARIABLES_JSON];
-
+void GameParser::parseVariables(game::Game &game, const json &jsonFile){
     game::Variables variables;
-    std::transform(variablesJson.items().begin(), variablesJson.items().end(), std::inserter(variables.list, variables.list.end()),
-                   [](const auto& element){
-                       game::Value value;
-                       game::Variable currentVariable;
-                       if (element.value().is_number())
-                       {
-                           value = static_cast<int>(element.value());
-                       }
-                       else if (element.value().is_string())
-                       {
-                           value = static_cast<std::string>(element.value());
-                       }
-                       else if (element.value().is_array())
-                       {
-                           std::vector<boost::variant<std::string, int>> currentList;
-                            std::transform(element.value().items().begin(), element.value().items().end(),std::inserter(currentList, currentList.end()),
-                            [](const auto& el)
-                            {
-                                boost::variant<std::string, int> arrayValue;
-                                if (el.value().is_number())
-                                {
-                                    arrayValue =  static_cast<int>(el.value());
-                                }
-                                else if (el.value().is_string())
-                                {
-                                    arrayValue =  static_cast<std::string>(el.value());
-                                }
-                                return arrayValue;
-                            });
-
-//                           value = std::move(currentList);
-                       }
-                       else if(element.value().is_object())
-                       {
-                           ;
-                       }
-                       currentVariable.name = element.key();
-                       currentVariable.value = value;
-                       return currentVariable;
-                   });
-
+    auto constantsJson = jsonFile[VARIABLES_JSON];
+    createValueTypeFromJson(variables, constantsJson);
     game.setVariables(variables);
 }
+
+void GameParser::parsePerAudience(game::Game &game, const json &jsonFile){
+    game::PerAudience perAudience;
+    auto constantsJson = jsonFile[PER_AUDIENCE_JSON];
+    createValueTypeFromJson(perAudience, constantsJson);
+    game.setPerAudience(perAudience);
+}
+
+void GameParser::parsePerPlayer(game::Game &game, const json &jsonFile){
+    game::PerPlayer perPlayer;
+    auto constantsJson = jsonFile[PER_PLAYER_JSON];
+    createValueTypeFromJson(perPlayer, constantsJson);
+    game.setPerPlayer(perPlayer);
+}
+
 
 void GameParser::parseGame(game::Game &game)
 {
@@ -185,4 +160,5 @@ bool GameParser::validateGameConfigJson(const json &jsonConfigFile)
 
     return found;
 }
+
 } // namespace parser

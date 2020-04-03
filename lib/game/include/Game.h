@@ -30,34 +30,28 @@ struct Configuration {
 
 // Constants and variables look the same now but that might change in the
 // future so i am keeping them separate. Same goes for perPlayer and perAudience
-struct Constant {
+struct GameValue
+{
     std::string name;
     Value value;
 };
 
 struct Constants {
-    std::vector<Constant> list;
-};
-
-struct Variable {
-    std::string name;
-    Value value;
+    std::vector<GameValue> list;
 };
 
 struct Variables {
-    std::vector<Variable> list;
-
+    std::vector<GameValue> list;
 };
 
 struct PerPlayer {
-    std::string name;
-    Value value;
+    std::vector<GameValue> list;
 };
 
 struct PerAudience {
-    std::string name;
-    Value value;
+    std::vector<GameValue> list;
 };
+
 
 class Game {
 
@@ -69,8 +63,8 @@ private:
     Configuration configuration;
     Constants constants;
     Variables variables;
-    std::vector<PerPlayer> perPlayer;
-    std::vector<PerAudience> perAudience;
+    PerPlayer perPlayer;
+    PerAudience perAudience;
 
     // TODO: add Rule rules class which will contain all the rules of the game.;
 
@@ -80,8 +74,8 @@ public:
     Game(Configuration configuration,
          Constants constants,
          Variables variables,
-            std::vector<PerPlayer> perPlayer,
-            std::vector<PerAudience> perAudience ) :
+         PerPlayer perPlayer,
+         PerAudience perAudience ) :
                 configuration{std::move(configuration)},
                 constants{std::move(constants)},
                 variables{std::move(variables)},
@@ -111,9 +105,9 @@ public:
 
     [[nodiscard]] Variables getGameVariables() const;
 
-    [[nodiscard]] std::vector<PerPlayer> getPerPlayer() const;
+    [[nodiscard]] PerPlayer getPerPlayer() const;
 
-    [[nodiscard]] std::vector<PerAudience> getPerAudience() const;
+    [[nodiscard]] PerAudience getPerAudience() const;
 
     //setters
     void setHostName(std::string& hName) noexcept;
@@ -128,6 +122,9 @@ public:
 
     void setVariables(Variables variables);
 
+    void setPerPlayer(PerPlayer gPerPlayer);
+
+    void setPerAudience(PerAudience gPerAudience);
 };
 
 }

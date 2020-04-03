@@ -1,9 +1,8 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include <memory>
-// #include "GameParser.h"
-#include "GameParser.h"
 #include "Game.h"
+#include "GameParser.h"
 
 std::string ValidJsonString =
 "{\n"
@@ -131,9 +130,10 @@ TEST(ParseConstants, ConstantTests)
 {
     game::Game testGame;
     parser::GameParser parser(ValidJsonString);
+    game::Constants constants;
     json jsonFile = json::parse(ValidJsonString);
     parser.parseConstants(testGame, jsonFile);
-    auto constants = testGame.getGameConstants();
+    constants = testGame.getGameConstants();
     auto firstConst = constants.list.at(0);
     auto thirdConst = constants.list.at(2);
     auto weaponsList = boost::get<game::List_of_values>(thirdConst.value);
@@ -159,7 +159,6 @@ TEST(ParseVariables, ConstantTests)
     ASSERT_EQ(1, variables.list.size());
     ASSERT_EQ("winners", firstVar.name);
     ASSERT_EQ(1, firstWinner);
-
 }
 
 TEST(validateGameConfigJson, ConfigurationTest)
