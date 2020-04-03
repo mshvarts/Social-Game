@@ -370,14 +370,14 @@ ServerImplDeleter::operator()(ServerImpl* serverImpl) {
 
 void
 Server::update() {
+
   impl->ioService.poll();
+
 }
 
 
 std::deque<ConnectionMessage>
 Server::receive() {
-
-
   std::deque<ConnectionMessage> oldIncoming;
   std::swap(oldIncoming, impl->incoming);
   return oldIncoming;

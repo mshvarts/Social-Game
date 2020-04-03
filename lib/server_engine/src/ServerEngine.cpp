@@ -95,6 +95,7 @@ void ServerEngine::sendMessageToAll(const std::string& message) {
 	for(auto const &userEntry : users) {
 		auto chatMessage = EngineMessage{ userEntry.first, message };
 		outgoing.push_back(chatMessage);
+
 	}
 }
 
@@ -115,6 +116,4 @@ void ServerEngine::sendRoomMessage(Room* room, const std::string& message) {
         auto chatMessage = EngineMessage{ userId, message };
         outgoing.push_back(chatMessage);
     }
-
-
 }

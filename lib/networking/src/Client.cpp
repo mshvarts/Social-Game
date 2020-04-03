@@ -63,6 +63,7 @@ public:
 
 void
 Client::ClientImpl::disconnect() {
+
   isClosed = true;
   websocket.async_close(boost::beast::websocket::close_code::normal,
     [] (auto errorCode) {
@@ -73,6 +74,7 @@ Client::ClientImpl::disconnect() {
 
 void
 Client::ClientImpl::connect(boost::asio::ip::tcp::resolver::iterator endpoint) {
+
   boost::asio::async_connect(websocket.next_layer(), endpoint,
     [this] (auto errorCode, auto) {
       if (!errorCode) {
@@ -86,6 +88,7 @@ Client::ClientImpl::connect(boost::asio::ip::tcp::resolver::iterator endpoint) {
 
 void
 Client::ClientImpl::handshake() {
+
   websocket.async_handshake(hostAddress, "/",
     [this] (auto errorCode) {
       if (!errorCode) {
@@ -99,6 +102,7 @@ Client::ClientImpl::handshake() {
 
 void
 Client::ClientImpl::readMessage() {
+
   websocket.async_read(readBuffer,
     [this] (auto errorCode, std::size_t size) {
       if (!errorCode) {
@@ -137,7 +141,7 @@ Client::~Client() = default;
 
 void
 Client::update() {
-  impl->ioService.poll();  
+  impl->ioService.poll();
 }
 
 
@@ -155,7 +159,6 @@ Client::send(std::string message) {
   if (message.empty()) {
     return;
   }
-
   impl->writeBuffer.emplace_back(std::move(message));
   impl->websocket.async_write(boost::asio::buffer(impl->writeBuffer.back()),
     [this] (auto errorCode, std::size_t /*size*/) {
