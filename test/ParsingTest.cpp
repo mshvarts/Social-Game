@@ -135,8 +135,15 @@ TEST(ParseConstants, ConstantTests)
     parser.parseConstants(testGame, jsonFile);
     auto constants = testGame.getGameConstants();
     auto firstConst = constants.list.at(0);
+    auto thirdConst = constants.list.at(2);
+    auto weaponsList = boost::get<game::List_of_values>(thirdConst.value);
+    auto firstWeapon = boost::get<game::Map_of_values>(weaponsList.at(0));
+    std::string name = boost::get<std::string>(firstWeapon["name"]);
+    std::string beats = boost::get<std::string>(firstWeapon["beats"]);
     ASSERT_EQ(3, constants.list.size());
     ASSERT_EQ("hands", firstConst.name);
+    ASSERT_EQ("Rock", name);
+    ASSERT_EQ("Scissors", beats);
 }
 
 TEST(ParseVariables, ConstantTests)

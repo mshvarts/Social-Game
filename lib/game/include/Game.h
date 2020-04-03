@@ -10,10 +10,10 @@
 namespace game {
 
 using Map_of_values = std::map<std::string, boost::variant<std::string, int>>;
-using List_of_values = std::vector<boost::variant<std::string, int>>;
+using List_of_values = std::vector<boost::variant<std::string, int, Map_of_values>>;
 
 // Values may themselves be (1) maps from names to values, (2) lists of values, or (3) literal strings, numbers, or booleans
-using Value = boost::variant<Map_of_values, List_of_values, std::string, int, bool>;
+using Value = boost::variant<List_of_values, std::string, int, bool>;
 
 struct PlayerCount {
     int max;
