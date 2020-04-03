@@ -18,18 +18,32 @@ enum Actions {
 	SETGAME
 };
 
-std::unordered_map<Actions, std::string> commands {
-	{Actions::CREATE_ROOM, "/create"},
-	{Actions::JOIN_ROOM, "/join"},
-	{Actions::LEAVE_ROOM, "/leave"},
-	{Actions::LIST_ROOMS, "/rooms"},
-	{Actions::START_GAME, "/start"},
-	{Actions::END_GAME, "/end"},
-	{Actions::SET_NICKNAME, "/name"},
-	{Actions::KICK_PLAYER, "/kick"},
-	{Actions::SHOW_ROOM_INFO, "/info"},
-	{Actions::COMMANDS, "/cmds"},
-	{Actions::SETGAME, "/setgame"}
+std::unordered_map<Actions,std::string> commands {
+        {Actions::CREATE_ROOM, "/create"},
+        {Actions::JOIN_ROOM, "/join"},
+        {Actions::LEAVE_ROOM, "/leave"},
+        {Actions::LIST_ROOMS, "/rooms"},
+        {Actions::START_GAME, "/start"},
+        {Actions::END_GAME, "/end"},
+        {Actions::SET_NICKNAME, "/name"},
+        {Actions::KICK_PLAYER, "/kick"},
+        {Actions::SHOW_ROOM_INFO, "/info"},
+        {Actions::COMMANDS, "/cmds"},
+        {Actions::SETGAME, "/setgame"}
+};
+
+std::vector<std::string> commandList {
+    "/create\t- Type /create *room name* to create a new room",
+    "/join\t- Type /join 'room name' to join a room. If it isn't already created, use /create to make it.",
+    "/leave\t- Type /leave to leave your current room.",
+    "/rooms\t- Type /rooms to get a list of rooms currently available.",
+    "/start\t- Type /start to start a game. This feature is only available to the host of the room. *still in development*",
+    "/end\t- Type /end to end the game. This feature is only available to the host of the room. *still in development*",
+    "/name\t- Type /name *new name* to change your name.",
+    "/kick\t- Type /kick *user Id* to kick a user from your room. *will be changed to take in user names",
+    "/info\t- Type /info to get information about the room you're currently in.",
+    "/cmds\t- Type /cmds to get a list of commands.",
+    "/setgame  Type /setgame 'game name' to set the game for your current room. This feature is only available to the host of the room. *still in development*"
 };
 
 std::unordered_map<std::string, std::function<void(ServerEngine*, const EngineMessage&)>> commandFunctions{
@@ -99,7 +113,6 @@ void createRoom(ServerEngine *engine, const EngineMessage& message) {
 
 	}
 	else {
-	    std::cout<<"You're in room: "<<user->getCurrentRoom()->getRoomId()<<"\n";
 		engine->sendMessage(userId, "You must leave a room before making a new one");
 	}
 }
@@ -134,8 +147,8 @@ void setRoomGame(ServerEngine *engine, const EngineMessage& message) {
 void showCommands(ServerEngine *engine, const EngineMessage& message) {
 	auto userId = message.userId;
 	engine->sendMessage(userId, "Command List: ");
-	for(auto command : commands) {
-		engine->sendMessage(userId, command.second);
+	for(auto command : commandList) {
+		engine->sendMessage(userId, command);
 	}
 }
 

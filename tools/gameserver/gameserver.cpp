@@ -78,17 +78,23 @@ processMessages(Server &server, const std::deque<ConnectionMessage> &incoming)
     {
     	auto messageUserId = connectionMapper->getUserIdForConnection(message.connection);
     	EngineMessage engineMessage{messageUserId, message.text};
-
     	serverEngine->processMessage(engineMessage);
-    	auto engineResponse = serverEngine->getMessages();
-    	for(auto &responseMessage : engineResponse) {
-    		auto messageConnection = connectionMapper->getConnectionForUserId(responseMessage.userId);
-    		ConnectionMessage outgoing{messageConnection, responseMessage.text};
-
-    		result.push_back(outgoing);
-    	}
+//    	auto engineResponse = serverEngine->getMessages();
+//    	for(auto &responseMessage : engineResponse) {
+//    		auto messageConnection = connectionMapper->getConnectionForUserId(responseMessage.userId);
+//    		ConnectionMessage outgoing{messageConnection, responseMessage.text};
+//
+//    		result.push_back(outgoing);
+//    	}
     }
   }
+
+    auto engineResponse = serverEngine->getMessages();     //I don't know if this is going to break something later, but it sure works for now.
+    for(auto &responseMessage : engineResponse) {          //In the case that moving this chunk of code breaks something down the line, just comment out these lines,
+        auto messageConnection = connectionMapper->getConnectionForUserId(responseMessage.userId);  //and uncomment the lines in the for loop above.
+        ConnectionMessage outgoing{messageConnection, responseMessage.text};                        //This chunk of code was moved so that messages sent from the server
+        result.push_back(outgoing);                                                                 //would be sent automatically instead of waiting for a user input to be sent first.
+    }
   return MessageResult{result, quit};
 }
 

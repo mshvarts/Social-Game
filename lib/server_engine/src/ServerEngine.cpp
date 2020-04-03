@@ -10,8 +10,8 @@ void ServerEngine::processMessage(const EngineMessage& message) {
 	parseMessage(message, this);
 }
 
-std::vector<EngineMessage> ServerEngine::getMessages() {        //find where this function gets used It doesn't get called when the serverengine calls messages, but does get called when
-	std::vector<EngineMessage> oldOutgoing;                     //MessageParse does.
+std::vector<EngineMessage> ServerEngine::getMessages() {
+	std::vector<EngineMessage> oldOutgoing;
 	std::swap(oldOutgoing, outgoing);
 	return oldOutgoing;
 }
@@ -25,6 +25,7 @@ void ServerEngine::logIn(UserId userId) {
     newUser.setName(newName);
     main->addUser(userId);
 	users.emplace(userId, std::move(newUser));
+	sendMessage(userId,"Welcome to the server "+newName+"! We hope you enjoy your stay.\nIf you would like to customize your display name, please type /name 'your name' to change it.");
     this -> sendRoomMessage(main,newName + " has joined the server.");
 
 }
