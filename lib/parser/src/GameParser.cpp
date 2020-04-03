@@ -1,5 +1,5 @@
 #include "GameParser.h"
-
+#include <iostream>
 namespace parser
 {
 
@@ -58,7 +58,16 @@ void GameParser::parseConstants(game::Game &game, const json &jsonFile)
                        }
                        else if (element.value().is_array())
                        {
-                         ; //TODO handle arrays and maps
+                           //using List_of_values = std::vector<boost::variant<std::string, int>>;
+
+                           ;
+                       }
+                       else if (element.value().is_object())
+                       {
+                           //using Map_of_values = std::map<std::string, boost::variant<std::string, int>>;
+                           //using List_of_values = std::vector<boost::variant<std::string, int>>;
+                            auto iamhere = element.value();
+                           ;
                        }
                        currentConstant.name = element.key();
                        currentConstant.value = value;
@@ -87,6 +96,27 @@ void GameParser::parseVariables(game::Game &game, const json &jsonFile)
                        }
                        else if (element.value().is_array())
                        {
+                           std::vector<boost::variant<std::string, int>> currentList;
+                            std::transform(element.value().items().begin(), element.value().items().end(),std::inserter(currentList, currentList.end()),
+                            [](const auto& el)
+                            {
+                                boost::variant<std::string, int> arrayValue;
+                                if (el.value().is_number())
+                                {
+                                    arrayValue =  static_cast<int>(el.value());
+                                }
+                                else if (el.value().is_string())
+                                {
+                                    arrayValue =  static_cast<std::string>(el.value());
+                                }
+                                return arrayValue;
+                            });
+
+                           value = std::move(currentList);
+                       }
+                       else if(element.value().is_object())
+                       {
+                           ;
                        }
                        currentVariable.name = element.key();
                        currentVariable.value = value;

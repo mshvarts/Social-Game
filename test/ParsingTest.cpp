@@ -38,7 +38,7 @@ std::string ValidJsonString =
 "    \"size\":77\n"
 "  },\n"
 "  \"variables\": {\n"
-"    \"winners\": []\n"
+"    \"winners\": [1,2,3]\n"
 "  },\n"
 "  \"per-player\": {\n"
 "    \"wins\": 0\n"
@@ -147,8 +147,12 @@ TEST(ParseVariables, ConstantTests)
     parser.parseVariables(testGame, jsonFile);
     auto variables = testGame.getGameVariables();
     auto firstVar = variables.list.at(0);
+    auto winnersList = boost::get<game::List_of_values>(firstVar.value);
+    auto firstWinner = boost::get<int>(winnersList.at(0));
     ASSERT_EQ(1, variables.list.size());
     ASSERT_EQ("winners", firstVar.name);
+    ASSERT_EQ(1, firstWinner);
+
 }
 
 TEST(validateGameConfigJson, ConfigurationTest)
