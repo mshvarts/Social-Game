@@ -59,12 +59,12 @@ Variables Game::getGameVariables() const
     return variables;
 }
 
-std::vector<PerPlayer> Game::getPerPlayer() const
+PerPlayer Game::getPerPlayer() const
 {
     return perPlayer;
 }
 
-std::vector<PerAudience> Game::getPerAudience() const
+PerAudience Game::getPerAudience() const
 {
     return perAudience;
 }
@@ -100,6 +100,15 @@ void Game::setVariables(Variables gVariables)
     variables = gVariables;
 }
 
+void Game::setPerPlayer(PerPlayer gPerPlayer)
+{
+    perPlayer = gPerPlayer;
+}
+
+void Game::setPerAudience(PerAudience gPerAudience)
+{
+    perAudience = gPerAudience;
+}
 
 
 } // namespace game

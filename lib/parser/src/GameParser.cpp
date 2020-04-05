@@ -1,7 +1,72 @@
 #include "GameParser.h"
-
 namespace parser
 {
+
+void createMapFromJson(game::Map_of_values& map, const json &jsonObj)
+{
+    std::transform(jsonObj.items().begin(), jsonObj.items().end(), std::inserter(map, map.end()),
+                   [](const auto& element){
+                       boost::variant<std::string, int> value;
+                       if (element.value().is_number())
+                       {
+                           value = static_cast<int>(element.value());
+                       }
+                       else
+                       {
+                           value = static_cast<std::string>(element.value());
+                       }
+
+                       return std::make_pair(element.key(),value);
+                   });
+}
+
+template <typename T>
+void createValueTypeFromJson(T& valueType, const json& jsonObj)
+{
+    std::transform(jsonObj.items().begin(), jsonObj.items().end(), std::inserter(valueType.list, valueType.list.end()),
+                   [](const auto& element){
+                       game::Value value;
+                       game::GameValue currentGameValue;
+                       if (element.value().is_number())
+                       {
+                           value = static_cast<int>(element.value());
+                       }
+                       else if (element.value().is_string())
+                       {
+                           value = static_cast<std::string>(element.value());
+                       }
+                       else if (element.value().is_array())
+                       {
+                           game::List_of_values currentList;
+                           std::transform(element.value().items().begin(), element.value().items().end(),std::inserter(currentList, currentList.end()),
+                                          [](const auto& el)
+                                          {
+                                              boost::variant<std::string, int, game::Map_of_values> arrayValue;
+                                              if (el.value().is_number())
+                                              {
+                                                  arrayValue =  static_cast<int>(el.value());
+                                              }
+                                              else if (el.value().is_string())
+                                              {
+                                                  arrayValue =  static_cast<std::string>(el.value());
+                                              }
+                                              else if(el.value().is_object())
+                                              {
+                                                  game::Map_of_values map;
+                                                  createMapFromJson(map, el.value());
+                                                  arrayValue = std::move(map);
+                                              }
+                                              return arrayValue;
+                                          });
+
+                           value = currentList;
+                       }
+                       currentGameValue.name = element.key();
+                       currentGameValue.value = value;
+                       return currentGameValue;
+                   });
+}
+
 
 void GameParser::parseGameConfiguration(game::Game &game, const json &jsonFile)
 {
@@ -21,80 +86,40 @@ void GameParser::parseGameConfiguration(game::Game &game, const json &jsonFile)
 
     game::Map_of_values setup;
     auto setupJson = configurationJson[SETUP_JSON];
-    std::transform(setupJson.items().begin(), setupJson.items().end(), std::inserter(setup, setup.end()),
-                   [](const auto& element){
-                        boost::variant<std::string, int> value;
-                       if (element.value().is_number())
-                       {
-                           value = static_cast<int>(element.value());
-                       }
-                       else
-                       {
-                           value = static_cast<std::string>(element.value());
-                       }
-
-                       return std::make_pair(element.key(),value);
-    });
+    createMapFromJson(setup, setupJson);
     config.setup = std::move(setup);
     game.setConfiguration(config);
 }
 
-void GameParser::parseConstants(game::Game &game, const json &jsonFile)
-{
-    auto constantsJson = jsonFile[CONSTANTS_JSON];
-
+void GameParser::parseConstants(game::Game &game, const json &jsonFile){
     game::Constants constants;
-    std::transform(constantsJson.items().begin(), constantsJson.items().end(), std::inserter(constants.list, constants.list.end()),
-                   [](const auto& element){
-                       game::Value value;
-                       game::Constant currentConstant;
-                       if (element.value().is_number())
-                       {
-                           value = static_cast<int>(element.value());
-                       }
-                       else if (element.value().is_string())
-                       {
-                           value = static_cast<std::string>(element.value());
-                       }
-                       else if (element.value().is_array())
-                       {
-                         ; //TODO handle arrays and maps
-                       }
-                       currentConstant.name = element.key();
-                       currentConstant.value = value;
-                       return currentConstant;
-                   });
 
+    auto constantsJson = jsonFile[CONSTANTS_JSON];
+    createValueTypeFromJson(constants, constantsJson);
     game.setConstants(constants);
 }
 
-void GameParser::parseVariables(game::Game &game, const json &jsonFile)
-{
-    auto variablesJson = jsonFile[VARIABLES_JSON];
-
+void GameParser::parseVariables(game::Game &game, const json &jsonFile){
     game::Variables variables;
-    std::transform(variablesJson.items().begin(), variablesJson.items().end(), std::inserter(variables.list, variables.list.end()),
-                   [](const auto& element){
-                       game::Value value;
-                       game::Variable currentVariable;
-                       if (element.value().is_number())
-                       {
-                           value = static_cast<int>(element.value());
-                       }
-                       else if (element.value().is_string())
-                       {
-                           value = static_cast<std::string>(element.value());
-                       }
-                       else if (element.value().is_array())
-                       {
-                       }
-                       currentVariable.name = element.key();
-                       currentVariable.value = value;
-                       return currentVariable;
-                   });
-
+    auto constantsJson = jsonFile[VARIABLES_JSON];
+    createValueTypeFromJson(variables, constantsJson);
     game.setVariables(variables);
 }
+
+void GameParser::parsePerAudience(game::Game &game, const json &jsonFile){
+    game::PerAudience perAudience;
+    auto constantsJson = jsonFile[PER_AUDIENCE_JSON];
+    createValueTypeFromJson(perAudience, constantsJson);
+    game.setPerAudience(perAudience);
+}
+
+void GameParser::parsePerPlayer(game::Game &game, const json &jsonFile){
+    game::PerPlayer perPlayer;
+    auto constantsJson = jsonFile[PER_PLAYER_JSON];
+    createValueTypeFromJson(perPlayer, constantsJson);
+    game.setPerPlayer(perPlayer);
+}
+
 
 void GameParser::parseGame(game::Game &game)
 {
@@ -135,4 +160,5 @@ bool GameParser::validateGameConfigJson(const json &jsonConfigFile)
 
     return found;
 }
+
 } // namespace parser

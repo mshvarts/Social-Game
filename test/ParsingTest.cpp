@@ -1,9 +1,8 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include <memory>
-// #include "GameParser.h"
-#include "GameParser.h"
 #include "Game.h"
+#include "GameParser.h"
 
 std::string ValidJsonString =
 "{\n"
@@ -38,7 +37,7 @@ std::string ValidJsonString =
 "    \"size\":77\n"
 "  },\n"
 "  \"variables\": {\n"
-"    \"winners\": []\n"
+"    \"winners\": [1,2,3]\n"
 "  },\n"
 "  \"per-player\": {\n"
 "    \"wins\": 0\n"
@@ -131,12 +130,20 @@ TEST(ParseConstants, ConstantTests)
 {
     game::Game testGame;
     parser::GameParser parser(ValidJsonString);
+    game::Constants constants;
     json jsonFile = json::parse(ValidJsonString);
     parser.parseConstants(testGame, jsonFile);
-    auto constants = testGame.getGameConstants();
+    constants = testGame.getGameConstants();
     auto firstConst = constants.list.at(0);
+    auto thirdConst = constants.list.at(2);
+    auto weaponsList = boost::get<game::List_of_values>(thirdConst.value);
+    auto firstWeapon = boost::get<game::Map_of_values>(weaponsList.at(0));
+    std::string name = boost::get<std::string>(firstWeapon["name"]);
+    std::string beats = boost::get<std::string>(firstWeapon["beats"]);
     ASSERT_EQ(3, constants.list.size());
     ASSERT_EQ("hands", firstConst.name);
+    ASSERT_EQ("Rock", name);
+    ASSERT_EQ("Scissors", beats);
 }
 
 TEST(ParseVariables, ConstantTests)
@@ -147,8 +154,11 @@ TEST(ParseVariables, ConstantTests)
     parser.parseVariables(testGame, jsonFile);
     auto variables = testGame.getGameVariables();
     auto firstVar = variables.list.at(0);
+    auto winnersList = boost::get<game::List_of_values>(firstVar.value);
+    auto firstWinner = boost::get<int>(winnersList.at(0));
     ASSERT_EQ(1, variables.list.size());
     ASSERT_EQ("winners", firstVar.name);
+    ASSERT_EQ(1, firstWinner);
 }
 
 TEST(validateGameConfigJson, ConfigurationTest)
