@@ -3,8 +3,8 @@
 #include "MessageParser.h"
 
 #include <algorithm>
+#include <time.h>
 
-ServerEngine::ServerEngine() = default;
 
 void ServerEngine::processMessage(const EngineMessage& message) {
 	parseMessage(message, this);
@@ -20,8 +20,14 @@ std::vector<EngineMessage> ServerEngine::getMessages() {
  */
 void ServerEngine::logIn(UserId userId) {
 	User newUser{userId, std::to_string(userId)};
+    newUser.setCurrentRoom(main);
+    std::string newName=generateRandomName();
+    newUser.setName(newName);
+    main->addUser(userId);
 	users.emplace(userId, std::move(newUser));
-	this->sendMessageToAll(std::to_string(userId) + " has joined the server.");
+	sendMessage(userId,"Welcome to the server "+newName+"! We hope you enjoy your stay.\nIf you would like to customize your display name, please type /name 'your name' to change it.");
+    this -> sendRoomMessage(main,newName + " has joined the server.");
+
 }
 
 void ServerEngine::logOut(UserId userId) {
@@ -31,13 +37,23 @@ void ServerEngine::logOut(UserId userId) {
 	if (user->getCurrentRoom()) {
 		leaveRoom(this, EngineMessage{ userId, "" });
 	}
-
-	this->sendMessageToAll(user->getName() + " has left the server.");
+    if (user->getCurrentRoom()==main)   //should theoretically be always.
+    {
+        main->removeUser(userId);
+    }
+	this->sendRoomMessage(main,user->getName() + " has left the server.");
 	users.erase(userId);
 }
 
-void ServerEngine::registerRoom(Room room) {
+void ServerEngine::registerRoom(Room room, UserId userId) {
+    room.setHost(userId);
+
+    room.setRoomId(roomCounter);
 	rooms.emplace(room.getRoomName(), room);
+
+	roomCounter++;
+
+
 }
 
 void ServerEngine::unregisterRoom(Room room) {
@@ -45,9 +61,11 @@ void ServerEngine::unregisterRoom(Room room) {
 }
 
 User* ServerEngine::findUserById(UserId userId) {
+
 	auto user = users.find(userId);
 
 	if (user == users.end()) {
+
 		return nullptr; // not found
 	}
 	else {
@@ -78,6 +96,7 @@ void ServerEngine::sendMessageToAll(const std::string& message) {
 	for(auto const &userEntry : users) {
 		auto chatMessage = EngineMessage{ userEntry.first, message };
 		outgoing.push_back(chatMessage);
+
 	}
 }
 
@@ -86,8 +105,16 @@ void ServerEngine::sendMessage(UserId toUserId, const std::string& message) {
 	outgoing.push_back(chatMessage);
 }
 
+std::string ServerEngine::generateRandomName()
+{
+    srand((unsigned)time(NULL) );
+    return nicknameFirstHalf[rand() % nicknameFirstHalf.size()] + nicknameSecondHalf[rand() % nicknameSecondHalf.size()];
+
+}
 void ServerEngine::sendRoomMessage(Room* room, const std::string& message) {
-	for (auto userId : room->getUserList()) {
-		sendMessage(userId, message);
-	}
+
+    for(auto const &userId : room->getUserList()) {
+        auto chatMessage = EngineMessage{ userId, message };
+        outgoing.push_back(chatMessage);
+    }
 }

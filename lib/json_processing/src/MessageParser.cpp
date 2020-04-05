@@ -18,18 +18,32 @@ enum Actions {
 	SETGAME
 };
 
-std::unordered_map<Actions, std::string> commands {
-	{Actions::CREATE_ROOM, "/create"},
-	{Actions::JOIN_ROOM, "/join"},
-	{Actions::LEAVE_ROOM, "/leave"},
-	{Actions::LIST_ROOMS, "/rooms"},
-	{Actions::START_GAME, "/start"},
-	{Actions::END_GAME, "/end"},
-	{Actions::SET_NICKNAME, "/name"},
-	{Actions::KICK_PLAYER, "/kick"},
-	{Actions::SHOW_ROOM_INFO, "/info"},
-	{Actions::COMMANDS, "/cmds"},
-	{Actions::SETGAME, "/setgame"}
+std::unordered_map<Actions,std::string> commands {
+        {Actions::CREATE_ROOM, "/create"},
+        {Actions::JOIN_ROOM, "/join"},
+        {Actions::LEAVE_ROOM, "/leave"},
+        {Actions::LIST_ROOMS, "/rooms"},
+        {Actions::START_GAME, "/start"},
+        {Actions::END_GAME, "/end"},
+        {Actions::SET_NICKNAME, "/name"},
+        {Actions::KICK_PLAYER, "/kick"},
+        {Actions::SHOW_ROOM_INFO, "/info"},
+        {Actions::COMMANDS, "/cmds"},
+        {Actions::SETGAME, "/setgame"}
+};
+
+std::vector<std::string> commandList {
+    "/create\t- Type /create *room name* to create a new room",
+    "/join\t- Type /join 'room name' to join a room. If it isn't already created, use /create to make it.",
+    "/leave\t- Type /leave to leave your current room.",
+    "/rooms\t- Type /rooms to get a list of rooms currently available.",
+    "/start\t- Type /start to start a game. This feature is only available to the host of the room. *still in development*",
+    "/end\t- Type /end to end the game. This feature is only available to the host of the room. *still in development*",
+    "/name\t- Type /name *new name* to change your name.",
+    "/kick\t- Type /kick *user Id* to kick a user from your room. *will be changed to take in user names",
+    "/info\t- Type /info to get information about the room you're currently in.",
+    "/cmds\t- Type /cmds to get a list of commands.",
+    "/setgame  Type /setgame 'game name' to set the game for your current room. This feature is only available to the host of the room. *still in development*"
 };
 
 std::unordered_map<std::string, std::function<void(ServerEngine*, const EngineMessage&)>> commandFunctions{
@@ -49,15 +63,17 @@ std::unordered_map<std::string, std::function<void(ServerEngine*, const EngineMe
 void parseMessage(const EngineMessage& message, ServerEngine *engine) {
 
 	std::string outputMessage;
-
+    auto user = engine->findUserById(message.userId);
+    auto room = user->getCurrentRoom();
 	if (isCommand(message.text)) {
 		parseCommand(message, engine);
 	}
+
 	else {
-		auto user = engine->findUserById(message.userId);
 		outputMessage = user->getName() + " > " + message.text;
 	}
-	engine->sendMessageToAll(outputMessage);
+	engine->sendRoomMessage(room,outputMessage);
+    //engine->sendMessageToAll(outputMessage);
 }
 
 void parseCommand(const EngineMessage& message, ServerEngine *engine) {
@@ -90,11 +106,11 @@ void createRoom(ServerEngine *engine, const EngineMessage& message) {
 	if (roomName.empty()) {
 		engine->sendMessage(userId, "Error: Room name is missing");
 	}
-	else if (!user->getCurrentRoom()) {
-		Room newroom{ roomName };
-		engine->registerRoom(newroom);
+	else if (user->getCurrentRoom()->getRoomId()==engine->mainRoomId) {
+		Room newRoom{ roomName };
+		engine->registerRoom(newRoom,userId);
 		engine->sendMessage(userId, "You have created a room. Type /join " + roomName + " to join.");
-		newroom.setHost(userId);
+
 	}
 	else {
 		engine->sendMessage(userId, "You must leave a room before making a new one");
@@ -129,11 +145,10 @@ void setRoomGame(ServerEngine *engine, const EngineMessage& message) {
 }
 
 void showCommands(ServerEngine *engine, const EngineMessage& message) {
-	auto userId = message.userId; 
-	
+	auto userId = message.userId;
 	engine->sendMessage(userId, "Command List: ");
-	for(auto command : commands) {
-		engine->sendMessage(userId, command.second);
+	for(auto command : commandList) {
+		engine->sendMessage(userId, command);
 	}
 }
 
@@ -163,7 +178,7 @@ void kickPlayer(ServerEngine *engine, const EngineMessage& message) {
 	if (kickPlayer.empty())  {
 		engine->sendMessage(userId, "You must specify a player id");
 	}
-	else if (room) {
+	else if (room->getRoomId()!=engine->mainRoomId) {
 		auto kickId = static_cast<UserId>(std::stoul(kickPlayer, nullptr, 0));
 		auto kickUser = engine->findUserById(kickId);
 		if (userId != room->getHostId()) {
@@ -173,7 +188,7 @@ void kickPlayer(ServerEngine *engine, const EngineMessage& message) {
 			if (room == kickUser->getCurrentRoom()) {
 				engine->sendRoomMessage(room, kickUser->getName() + " has been kicked from the room.");
 				room->removeUser(kickId);
-				kickUser->setCurrentRoom(nullptr);
+				kickUser->setCurrentRoom(engine->main);
 			}
 			else {
 				engine->sendMessage(userId, "You cannot kick a player in another room");
@@ -211,7 +226,7 @@ void startGame(ServerEngine *engine, const EngineMessage& message) {
 	auto user = engine->findUserById(userId);
 	auto room = user->getCurrentRoom();
 
-	if (room) {
+	if (room->getRoomId()!=engine->mainRoomId) {
 		auto game = room->getGame();
 		if (game) {
 			game->setIsGameBeingPlayed(true);
@@ -228,7 +243,7 @@ void endGame(ServerEngine *engine, const EngineMessage& message) {
 	auto user = engine->findUserById(userId);
 	auto room = user->getCurrentRoom();
 
-	if (room) {
+	if (room->getRoomId()!=engine->mainRoomId) {
 		auto game = room->getGame();
 		if (game) {
 			game->setIsGameBeingPlayed(false);
@@ -245,12 +260,12 @@ void leaveRoom(ServerEngine *engine, const EngineMessage& message) {
 
 	auto user = engine->findUserById(userId);
 	auto room = user->getCurrentRoom();
-	if (room) {
-		engine->sendRoomMessage(room, user->getName() + " has left the room.");
+	if (room->getRoomId()!=engine->mainRoomId) {
 		room->removeUser(userId);
+        user->setCurrentRoom(engine->main);
+        engine->main->addUser(userId);
+        engine->sendRoomMessage(room, user->getName() + " has left the room.");
 		engine->sendMessage(userId, "You have left room '" + room->getRoomName() + "'");
-		user->setCurrentRoom(nullptr);
-
 	}
 	else {
 		engine->sendMessage(userId, "You are not in any room");
@@ -261,18 +276,20 @@ void joinRoom(ServerEngine *engine, const EngineMessage& message) {
 	auto userId = message.userId;
 	auto roomName = extractArguments(message.text);
 	auto room = engine->findRoomByName(roomName);
-
 	auto user = engine->findUserById(userId);
-	if (user->getCurrentRoom()) {
-		engine->sendMessage(userId, "You must leave your room before joining another one");
-	}
-	else if (room) {
+	auto currentRoom=user->getCurrentRoom();
+
+    if (room && currentRoom->getRoomId()==engine->mainRoomId) {
+        currentRoom->removeUser(userId);
+        auto user = engine->findUserById(userId);
+        user->setCurrentRoom(room);
+        room->addUser(userId);
 		engine->sendRoomMessage(room, user->getName() + " has joined the room.");
-		engine->sendMessage(userId, "You have joined room '" + room->getRoomName() + "'");
-		auto user = engine->findUserById(userId);
-		user->setCurrentRoom(room);
-		room->addUser(userId);
+		//engine->sendMessage(userId, "You have joined room '" + room->getRoomName() + "'");
 	}
+	else if (currentRoom->getRoomId()!=engine->mainRoomId) {
+        engine->sendMessage(userId, "You must leave your room before joining another one");
+        }
 	else {
 		engine->sendMessage(userId, "This room does not exist");
 	}
@@ -284,12 +301,11 @@ void showRoomInfo(ServerEngine *engine, const EngineMessage& message) {
 	auto user = engine->findUserById(userId);
 	if (user) {
 		auto room = user->getCurrentRoom();
-		if (room) {
+		if (room->getRoomId()!=engine->mainRoomId) {
 			engine->sendMessage(userId, "Room name: " + room->getRoomName());
 			engine->sendMessage(userId, "Number of players: " + std::to_string(room->getNumOfPlayers()) + "/" + std::to_string(room->getRoomMaxSize()));
 			auto playerList = room->getUserList();
-			auto roomId = room->getHostId();
-			engine->sendMessage(userId, "Room host: " + engine->findUserById(roomId)->getName());
+			engine->sendMessage(userId, "Room host: " + engine->findUserById(room->getHostId())->getName());
 			engine->sendMessage(userId, "Player list: ");
 			if (!playerList.empty()) {
 				for (auto player : playerList) {

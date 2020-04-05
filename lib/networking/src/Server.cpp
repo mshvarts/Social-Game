@@ -130,6 +130,7 @@ Channel::send(std::string outgoing) {
   if (outgoing.empty()) {
     return;
   }
+
   writeBuffer.push_back(std::move(outgoing));
 
   if (1 < writeBuffer.size()) {
@@ -140,6 +141,7 @@ Channel::send(std::string outgoing) {
   }
 
   websocket.async_write(boost::asio::buffer(writeBuffer.back()),
+
     [this, self = shared_from_this()] (auto errorCode, std::size_t size) {
       afterWrite(errorCode, size);
     });
@@ -370,7 +372,9 @@ ServerImplDeleter::operator()(ServerImpl* serverImpl) {
 
 void
 Server::update() {
+
   impl->ioService.poll();
+
 }
 
 
