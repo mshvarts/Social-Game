@@ -39,6 +39,7 @@ public:
     void parseVariables(game::Game &game, const json &jsonFile);
     void parsePerPlayer(game::Game &game, const json &jsonFile);
     void parsePerAudience(game::Game &game, const json &jsonFile);
+	void parseRules(game::Game &game, const json &jsonFile);
 };
 
 

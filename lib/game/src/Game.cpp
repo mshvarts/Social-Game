@@ -100,7 +100,7 @@ void Game::setConstants(Constants gConstants)
     constants = gConstants;
 }
 
-void Game::setRules(Constants gRules)
+void Game::setRules(Rules gRules)
 {
 	rules = gRules;
 }

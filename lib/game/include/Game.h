@@ -68,6 +68,7 @@ private:
     Variables variables;
     PerPlayer perPlayer;
     PerAudience perAudience;
+	Rules rules;
 
     // TODO: add Rule rules class which will contain all the rules of the game.;
 
@@ -106,6 +107,8 @@ public:
 
     [[nodiscard]] Constants getGameConstants() const;
 
+	[[nodiscard]] Rules getGameRules() const;
+
     [[nodiscard]] Variables getGameVariables() const;
 
     [[nodiscard]] PerPlayer getPerPlayer() const;
@@ -122,6 +125,8 @@ public:
     void setConfiguration(Configuration configuration);
 
     void setConstants(Constants constants);
+
+	void setRules(Rules rules);
 
     void setVariables(Variables variables);
 

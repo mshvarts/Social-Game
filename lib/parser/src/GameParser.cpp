@@ -68,8 +68,7 @@ void createValueTypeFromJson(T& valueType, const json& jsonObj)
 }
 
 
-void GameParser::parseRules(game::Game &game, const json &jsonFile)
-{
+void GameParser::parseRules(game::Game &game, const json &jsonFile) {
 	game::Rules rules; 
 
 	auto rulesJson = jsonFile[RULES_JSON];

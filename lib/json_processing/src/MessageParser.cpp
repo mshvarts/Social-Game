@@ -240,7 +240,7 @@ void startGame(ServerEngine *engine, const EngineMessage& message) {
 			engine->sendMessage(userId, "Error: Please configure a game first using /setgame");
 		}
 		else if (game->getMinNumberOfPlayers() > room->getNumOfPlayers() || room->getNumOfPlayers() > game->getMaxNumberOfPlayers()) {
-			engine->sendMessage(userId, "Error: You do not have the right amount of players (" + game->getMinNumberOfPlayers() + "-" + game->getMaxNumberOfPlayers() + ")");
+			engine->sendMessage(userId, "Error: You do not have the right amount of players (" + std::to_string(game->getMinNumberOfPlayers()) + "-" + std::to_string(game->getMaxNumberOfPlayers()) + ")");
 		}
 		else {
 			game->setIsGameBeingPlayed(true);
@@ -291,9 +291,13 @@ void joinRoom(ServerEngine *engine, const EngineMessage& message) {
 	auto roomName = extractArguments(message.text);
 	auto room = engine->findRoomByName(roomName);
 	auto user = engine->findUserById(userId);
-	auto currentRoom=user->getCurrentRoom();
+	auto currentRoom = user->getCurrentRoom();
+	auto game = room->getGame();
 
-    if (room && currentRoom->getRoomId() == engine->mainRoomId && roomName != engine->mainRoomName) {
+	if (game && game->getMaxNumberOfPlayers() >= room->getNumOfPlayers()) {
+		engine->sendMessage(userId, "This room is full.");
+	}
+    else if (room && currentRoom->getRoomId() == engine->mainRoomId && roomName != engine->mainRoomName) {
 		engine->sendRoomMessage(room, user->getName() + " has joined the room."); 
         currentRoom->removeUser(userId);
         auto user = engine->findUserById(userId);

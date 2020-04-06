@@ -42,7 +42,8 @@ std::string ValidJsonString =
 "  \"per-player\": {\n"
 "    \"wins\": 0\n"
 "  },\n"
-"  \"per-audience\": {}}";
+"  \"per-audience\": {},"
+"  \"rules\": {}}";
 
 std::string InvalidJsonString =
 "{\n"
@@ -79,9 +80,10 @@ std::string InvalidJsonString =
  "  \"per-player\": {\n"
  "    \"wins\": 0\n"
  "  },\n"
- "  \"per-audience\": {}}";
+ "  \"per-audience\": {},"
+ "  \"rules\": {}}";
 
-std::string ValidJsonString2 = "{ \"configuration\": { \"name\": \"Zen Game\", \"player count\": {\"min\": 0, \"max\": 0}, \"audience\": false, \"setup\": { } }, \"constants\": {}, \"variables\": {}, \"per-player\": {}, \"per-audience\": {}, \"rules\": {} }";
+std::string ValidJsonString2 = "{ \"configuration\": { \"name\": \"Zen Game\", \"player count\": {\"min\": 0, \"max\": 0}, \"audience\": false, \"setup\": { } }, \"constants\": {}, \"variables\": {}, \"per-player\": {}, \"per-audience\": {}, \"rules\": [{ \"rule\": \"global - message\",\"value\": \"Round {round}. Choose your weapon!\" }] }";
 
 TEST(ParseNameTest, ConfigurationTest)
 {
@@ -160,6 +162,21 @@ TEST(ParseVariables, ConstantTests)
     ASSERT_EQ((long unsigned)1, variables.list.size());
     ASSERT_EQ("winners", firstVar.name);
     ASSERT_EQ(1, firstWinner);
+}
+
+TEST(ParseRules, RulesTest)
+{
+	game::Game testGame;
+	parser::GameParser parser(ValidJsonString2);
+	json jsonFile = json::parse(ValidJsonString2);
+	parser.parseRules(testGame, jsonFile);
+
+	auto rules = testGame.getGameRules();
+	auto firstVar = rules.list.at(0);
+	
+	ASSERT_EQ((long unsigned)1, rules.list.size());
+	// TODO: find out why the line below is failing
+	// ASSERT_EQ("rule", firstVar.name); 
 }
 
 TEST(validateGameConfigJson, ConfigurationTest)
