@@ -27,13 +27,16 @@ struct Configuration {
     Map_of_values setup;
 };
 
-
 // Constants and variables look the same now but that might change in the
 // future so i am keeping them separate. Same goes for perPlayer and perAudience
 struct GameValue
 {
     std::string name;
     Value value;
+};
+
+struct Rules {
+	std::vector<GameValue> list;
 };
 
 struct Constants {

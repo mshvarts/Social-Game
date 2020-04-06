@@ -54,6 +54,11 @@ Constants Game::getGameConstants() const
     return constants;
 }
 
+Rules Game::getGameRules() const
+{
+	return rules;
+}
+
 Variables Game::getGameVariables() const
 {
     return variables;
@@ -93,6 +98,11 @@ void Game::setConfiguration(Configuration gConfiguration) {
 void Game::setConstants(Constants gConstants)
 {
     constants = gConstants;
+}
+
+void Game::setRules(Constants gRules)
+{
+	rules = gRules;
 }
 
 void Game::setVariables(Variables gVariables)

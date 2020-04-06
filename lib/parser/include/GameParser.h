@@ -23,6 +23,7 @@ namespace parser
 #define VARIABLES_JSON "variables"
 #define PER_PLAYER_JSON "per-player"
 #define PER_AUDIENCE_JSON "per-audience"
+#define RULES_JSON "rules"
 
 class GameParser
 {

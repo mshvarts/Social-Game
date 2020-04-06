@@ -87,7 +87,9 @@ Room* ServerEngine::findRoomByName(const std::string& roomName) {
 std::vector<Room> ServerEngine::getRooms() {
 	std::vector<Room> roomList;
 	for (auto room : rooms) {
-		roomList.push_back(room.second);
+		if (room.second.getRoomId() != mainRoomId) {
+			roomList.push_back(room.second);
+		}
 	}
 	return roomList;
 }

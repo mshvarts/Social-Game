@@ -68,6 +68,15 @@ void createValueTypeFromJson(T& valueType, const json& jsonObj)
 }
 
 
+void GameParser::parseRules(game::Game &game, const json &jsonFile)
+{
+	game::Rules rules; 
+
+	auto rulesJson = jsonFile[RULES_JSON];
+	createValueTypeFromJson(rules, rulesJson);
+	game.setRules(rules);
+}
+
 void GameParser::parseGameConfiguration(game::Game &game, const json &jsonFile)
 {
     auto configurationJson = jsonFile[CONFIGURATION_JSON];
@@ -129,6 +138,11 @@ void GameParser::parseGame(game::Game &game)
     json jsonFile = json::parse(jsonString);
 
     parseGameConfiguration(game, jsonFile);
+	parsePerPlayer(game, jsonFile);
+	parsePerAudience(game, jsonFile);
+	parseVariables(game, jsonFile);
+	parseConstants(game, jsonFile);
+	parseRules(game, jsonFile);
 }
 
 // TODO: might have to look into making this function static or not inside this class.
@@ -145,7 +159,8 @@ bool GameParser::validateGameConfigJson(const json &jsonConfigFile)
             CONSTANTS_JSON,
             VARIABLES_JSON,
             PER_AUDIENCE_JSON,
-            PER_PLAYER_JSON
+            PER_PLAYER_JSON,
+			RULES_JSON
     };
 
     // For now the validation will just be a simple check to see if the keys exist.

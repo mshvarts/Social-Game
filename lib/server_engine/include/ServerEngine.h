@@ -36,7 +36,8 @@ public:
 	}
 	RoomId roomCounter=0;
 	Room* main;
-    const RoomId mainRoomId=0;    //in theory the main room's Id should always be zero, but I'd prefer to implement this as findIdByName("Main") once that function gets implemented
+    const RoomId mainRoomId = 0;    //in theory the main room's Id should always be zero, but I'd prefer to implement this as findIdByName("Main") once that function gets implemented
+	const std::string mainRoomName = "Main";
 	void logIn(UserId userId);
 	void logOut(UserId userId);
 	void registerRoom(Room room, UserId userId);

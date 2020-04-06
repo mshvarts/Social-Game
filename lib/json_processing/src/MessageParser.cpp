@@ -108,7 +108,7 @@ void createRoom(ServerEngine *engine, const EngineMessage& message) {
 	}
 	else if (user->getCurrentRoom()->getRoomId()==engine->mainRoomId) {
 		Room newRoom{ roomName };
-		engine->registerRoom(newRoom,userId);
+		engine->registerRoom(newRoom, userId);
 		engine->sendMessage(userId, "You have created a room. Type /join " + roomName + " to join.");
 
 	}
@@ -133,10 +133,12 @@ void setRoomGame(ServerEngine *engine, const EngineMessage& message) {
 	else {
 		game::Game newGame;
 		parser::GameParser parser(gameConfig);
-		auto validConfig = parser.validateGameConfigJson(gameConfig);
+		json jsonFile = json::parse(gameConfig);
+		auto validConfig = parser.validateGameConfigJson(jsonFile);
 		if (validConfig) {
 			parser.parseGame(newGame);
 			room->setGame(&newGame);
+			engine->sendRoomMessage(room, "Room host has configured the game to " + newGame.getGameName());
 		}
 		else {
 			engine->sendMessage(userId, "Error: Game config is invalid or not a JSON");
@@ -213,7 +215,7 @@ void setName(ServerEngine *engine, const EngineMessage& message) {
 		engine->sendMessage(userId, "Error: Name is missing");
 	}
 	else if (newName.length() < MAX_NAME_LENGTH) {
-		engine->sendMessageToAll(oldName + " has changed his name from to " + newName);
+		engine->sendMessageToAll(oldName + " has changed his name to " + newName);
 		user->setName(newName);
 	}
 	else {
@@ -226,15 +228,24 @@ void startGame(ServerEngine *engine, const EngineMessage& message) {
 	auto user = engine->findUserById(userId);
 	auto room = user->getCurrentRoom();
 
-	if (room->getRoomId()!=engine->mainRoomId) {
-		auto game = room->getGame();
-		if (game) {
-			game->setIsGameBeingPlayed(true);
-			engine->sendRoomMessage(room, user->getName() + " has started the game.");
-		}
+	if (room->getRoomId() == engine->mainRoomId) {
+		engine->sendMessage(userId, "Error: You are not in any room");
+	}
+	else if (room->getHostId() != userId) {
+		engine->sendMessage(userId, "Error: You are not the host of this room");
 	}
 	else {
-		engine->sendMessage(userId, "You are not in any room");
+		auto game = room->getGame();
+		if (!game) {
+			engine->sendMessage(userId, "Error: Please configure a game first using /setgame");
+		}
+		else if (game->getMinNumberOfPlayers() > room->getNumOfPlayers() || room->getNumOfPlayers() > game->getMaxNumberOfPlayers()) {
+			engine->sendMessage(userId, "Error: You do not have the right amount of players (" + game->getMinNumberOfPlayers() + "-" + game->getMaxNumberOfPlayers() + ")");
+		}
+		else {
+			game->setIsGameBeingPlayed(true);
+			engine->sendRoomMessage(room, "The room host has started the game.");
+		}
 	}
 }
 
@@ -243,15 +254,18 @@ void endGame(ServerEngine *engine, const EngineMessage& message) {
 	auto user = engine->findUserById(userId);
 	auto room = user->getCurrentRoom();
 
-	if (room->getRoomId()!=engine->mainRoomId) {
+	if (room->getRoomId() == engine->mainRoomId) {
+		engine->sendMessage(userId, "Error: You are not in any room");
+	}
+	else if (room->getHostId() != userId) {
+		engine->sendMessage(userId, "Error: You are not the host of this room");
+	}
+	else {
 		auto game = room->getGame();
 		if (game) {
 			game->setIsGameBeingPlayed(false);
-			engine->sendRoomMessage(room, user->getName() + " has ended the game.");
+			engine->sendRoomMessage(room, "The room host has ended the game.");
 		}
-	}
-	else {
-		engine->sendMessage(userId, "You are not in any room");
 	}
 }
 
@@ -279,17 +293,17 @@ void joinRoom(ServerEngine *engine, const EngineMessage& message) {
 	auto user = engine->findUserById(userId);
 	auto currentRoom=user->getCurrentRoom();
 
-    if (room && currentRoom->getRoomId()==engine->mainRoomId) {
+    if (room && currentRoom->getRoomId() == engine->mainRoomId && roomName != engine->mainRoomName) {
+		engine->sendRoomMessage(room, user->getName() + " has joined the room."); 
         currentRoom->removeUser(userId);
         auto user = engine->findUserById(userId);
         user->setCurrentRoom(room);
         room->addUser(userId);
-		engine->sendRoomMessage(room, user->getName() + " has joined the room.");
-		//engine->sendMessage(userId, "You have joined room '" + room->getRoomName() + "'");
+		engine->sendMessage(userId, "You have joined room '" + room->getRoomName() + "'");
 	}
-	else if (currentRoom->getRoomId()!=engine->mainRoomId) {
+	else if (currentRoom->getRoomId() != engine->mainRoomId) {
         engine->sendMessage(userId, "You must leave your room before joining another one");
-        }
+	}
 	else {
 		engine->sendMessage(userId, "This room does not exist");
 	}
