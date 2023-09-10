@@ -8,7 +8,7 @@ Currently supports playing the game Rock Paper Scissors but is customizable to w
 Team Francesinha Social Gaming Project
 Members:
 
-- Max Shvartsman
+- Max
 - John
 - Kirat
 - Camilo
