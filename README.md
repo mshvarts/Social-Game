@@ -1,7 +1,7 @@
 # About
-An engaging social game created for SFU's CMPT 373 class in a team of seven members.   
+An engaging social game group project created for SFU's CMPT 373 class.   
 It uses web sockets to connect the front-end chatbox with the C++ backend code.   
-Currently supports playing the game Rock Paper Scissors.
+Currently supports playing the game Rock Paper Scissors but is customizable to work with any game.
 
 # Social Gaming
 
